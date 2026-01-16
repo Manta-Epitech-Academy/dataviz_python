@@ -111,8 +111,8 @@ Pour la première étape de notre analyse nous allons filtrer nos données.
 Par exemple, dans un nouveau bloc de code: pour extraire uniquement les médailles d'or de notre jeu de données:
 
 ```python
-data = df[df.medal == "gold"]
-data
+df_medailles_or = df[df.medal == "gold"]
+df_medailles_or
 ```
 
 ![filtre1](img/Slide1.jpg)
@@ -169,13 +169,13 @@ Par exemple, pour visualiser le nombre de médailles obtenues par la France par 
 
 ```python
 
-medals_fr = df[df.country == "FRA"]
+df_medailles_france = df[df.country == "FRA"]
 
-data = medals_fr.groupby('year').size().reset_index(name="medals_count")
+df_france_par_annee = df_medailles_france.groupby('year').size().reset_index(name="medals_count")
 
-print(data)
+print(df_france_par_annee)
 
-plt.bar(data.year.astype(str), data.medals_count)
+plt.bar(df_france_par_annee.year.astype(str), df_france_par_annee.medals_count)
 plt.xticks(rotation=90)
 plt.xlabel('Année')
 plt.ylabel('Nombre de médailles')
@@ -217,7 +217,7 @@ plt.show()
 Par exemple:
 ```
 ...
-plt.plot(data.year.astype(str), data.medals_count, color="r")
+plt.plot(df_france_par_annee.year.astype(str), df_france_par_annee.medals_count, color="r")
 ```
 
 Vous donnera un graphique avec une apparence différente.
@@ -246,6 +246,9 @@ Nous voulons garder que le Top 5 des pays en nombre de médaille obtenue aux JO 
 
 Il est possible de récupérer les `N` premiers elements d'un DataFrame avec la méthode `.head(N)`, si votre DataFrame est déjà trié par ordre décroissant celà revient à faire un "Top N" 
 
+💡 Astuce 💡:
+- Dans cet exemple, on suppose que votre DataFrame trié s'appelle `classement_pays` (classement des pays par nombre de médailles).
+
 
 ➡️ Après avoir utilisé `.head(3)`, vous aurez un DataFrame contenant uniquement les 3 premières lignes du tableau, dans l'ordre d'origine.
 
@@ -253,22 +256,22 @@ Il est possible de récupérer les `N` premiers elements d'un DataFrame avec la 
 
 Avant `head(3)` :  
 
-| pays     | nb_medailles |
-|----------|--------------|
-| USA      | 280          |
-| Russie   | 220          |
-| Canada   | 230          |
-| Norvège  | 350          |
-| Allemagne| 320          |
-| Finlande | 189          |
+| artiste        | ecoutes |
+|----------------|---------|
+| Jul            | 350     |
+| Aya Nakamura   | 320     |
+| Orelsan        | 280     |
+| Stromae        | 230     |
+| PNL            | 220     |
+| Angèle         | 189     |
 
-Après `df.head(3)` :  
+Après `classement_artistes.head(3)` :  
 
-| pays     | nb_medailles |
-|----------|--------------|
-| USA      | 280          |
-| Russie   | 220          |
-| Canada   | 230          |
+| artiste      | ecoutes |
+|--------------|---------|
+| Jul          | 350     |
+| Aya Nakamura | 320     |
+| Orelsan      | 280     |
 
 
 ## ⚡ Expérimentation ⚡
@@ -400,12 +403,12 @@ Ce code calcule la moyenne de notes pour chaque étudiant en regroupant toutes l
 
 💡 Astuce 💡:
 - Après un `.groupby()`, vous pouvez appliquer différentes fonctions comme `.mean()`, `.sum()`, `.max()`, etc.
-- Par exemple : `group.groupby(['country', 'host'])['medals'].mean()` calcule la moyenne de la colonne 'medals' pour chaque groupe (pays, statut)
+- Par exemple : `df_medailles_par_pays_hote_annee.groupby(['country', 'host'])['medals'].mean()` calcule la moyenne de la colonne 'medals' pour chaque groupe (pays, statut)
 
 ### ⚡ Expérimentation ⚡
 
 Dans un nouveau bloc de code:
-- À partir du DataFrame `group` créé à l'étape précédente, regroupez par `country` et `host`
+- À partir du DataFrame `df_medailles_par_pays_hote_annee` créé à l'étape précédente, regroupez par `country` et `host`
 - Calculez la moyenne de la colonne `medals` pour chaque groupe
 - Utilisez `.reset_index(name="average")` pour transformer le résultat en DataFrame
 
@@ -463,7 +466,7 @@ print(nb_mois)
 ### ⚡ Expérimentation ⚡
 
 Dans un nouveau bloc de code:
-- Calculez le nombre de participations pour chaque combinaison (pays, statut d'organisateur) à partir du DataFrame `group`
+- Calculez le nombre de participations pour chaque combinaison (pays, statut d'organisateur) à partir du DataFrame `df_medailles_par_pays_hote_annee`
 - Utilisez `.groupby(['country', 'host']).size()` pour compter le nombre d'années
 - Utilisez `.reset_index(name="nb_participations")` pour créer un DataFrame avec une colonne nommée "nb_participations"
 
@@ -519,7 +522,7 @@ print(moyennes_completes)
 ### ⚡ Expérimentation ⚡
 
 Dans un nouveau bloc de code:
-- Fusionnez le DataFrame `avg` (moyennes) avec le DataFrame `participations` en utilisant `.merge()`
+- Fusionnez le DataFrame `df_moyennes_par_pays_hote` (moyennes) avec le DataFrame `df_participations_par_pays_hote` en utilisant `.merge()`
 - Utilisez `on=['country', 'host']` pour faire la jointure sur ces deux colonnes
 - Affichez le résultat pour voir les moyennes avec leur nombre de participations correspondant
 
@@ -574,13 +577,13 @@ print(pivot_notes)
 ### ⚡ Expérimentation ⚡
 
 Dans un nouveau bloc de code:
-- Utilisez `.pivot_table()` sur votre DataFrame `avg_with_participations` pour réorganiser les données avec `country` en lignes et `host` en colonnes
+- Utilisez `.pivot_table()` sur votre DataFrame `df_moyennes_avec_participations` pour réorganiser les données avec `country` en lignes et `host` en colonnes
 - Utilisez `.reset_index()` pour transformer le résultat en DataFrame normal
 - Renommez les colonnes pour plus de clarté : `['country', 'avg_ext', 'avg_dom']` (extérieur/domicile)
 
 💡 Astuce 💡:
 - Les colonnes True/False peuvent être dans un ordre différent selon vos données
-- Vérifiez l'ordre avec `pivot.columns` avant de renommer
+- Vérifiez l'ordre avec `pivot_moyennes.columns` avant de renommer
 
 ## Filtrer les pays avec les deux types de données et un nombre minimum de participations
 
@@ -623,22 +626,22 @@ ventes_filtrees = ventes[
 ### ⚡ Expérimentation ⚡
 
 Dans un nouveau bloc de code:
-- Créez un pivot pour les participations à partir de `avg_with_participations` :
+- Créez un pivot pour les participations à partir de `df_moyennes_avec_participations` :
   ```python
-  pivot_participations = avg_with_participations.pivot_table(
+  pivot_participations = df_moyennes_avec_participations.pivot_table(
       index='country',
       columns='host',
       values='nb_participations'
   ).reset_index()
   ```
-- Utilisez `.dropna()` sur votre DataFrame `pivot` pour ne garder que les pays qui ont les deux types de données (pas de valeurs manquantes)
+- Utilisez `.dropna()` sur votre DataFrame `pivot_moyennes` pour ne garder que les pays qui ont les deux types de données (pas de valeurs manquantes)
 - Optionnel : Filtrez également les pays qui ont moins de 3 participations en extérieur ou moins de 1 participation en domicile :
   ```python
-  pivot_filtered = pivot[
+  pivot_moyennes_filtre = pivot_moyennes[
       (pivot_participations[False] >= 3) &  # Au moins 3 participations en extérieur
       (pivot_participations[True] >= 1) &   # Au moins 1 participation en domicile
-      (pivot['avg_ext'].notna()) &          # A une moyenne en extérieur
-      (pivot['avg_dom'].notna())            # A une moyenne en domicile
+      (pivot_moyennes['avg_ext'].notna()) &          # A une moyenne en extérieur
+      (pivot_moyennes['avg_dom'].notna())            # A une moyenne en domicile
   ].copy()
   ```
 - Comparez le nombre de pays avant et après le filtrage
@@ -686,12 +689,12 @@ Supposons qu'un magasin a vendu en moyenne 100 produits par mois l'année derni�
 ### ⚡ Expérimentation ⚡
 
 Dans un nouveau bloc de code:
-- Créez une nouvelle colonne `boost` dans votre DataFrame `pivot` (ou `pivot_filtered` si vous avez déjà filtré) avec la formule du pourcentage d'amélioration
+- Créez une nouvelle colonne `boost` dans votre DataFrame `pivot_moyennes` (ou `pivot_moyennes_filtre` si vous avez déjà filtré) avec la formule du pourcentage d'amélioration
 - Utilisez la formule : `((avg_dom - avg_ext) / avg_ext) * 100`
-- Si vous utilisez `pivot_filtered`, le calcul du boost se fera automatiquement sur les pays filtrés
+- Si vous utilisez `pivot_moyennes_filtre`, le calcul du boost se fera automatiquement sur les pays filtrés
 - Affichez le résultat
 
-💡 **Note** : Si vous avez créé `pivot_filtered` à l'étape précédente, utilisez-le pour calculer le boost. Sinon, vous pouvez calculer le boost sur `pivot` puis filtrer ensuite.
+💡 **Note** : Si vous avez créé `pivot_moyennes_filtre` à l'étape précédente, utilisez-le pour calculer le boost. Sinon, vous pouvez calculer le boost sur `pivot_moyennes` puis filtrer ensuite.
 
 ## Trier les résultats
 
@@ -734,7 +737,7 @@ print(etudiants_tries)
 ### ⚡ Expérimentation ⚡
 
 Dans un nouveau bloc de code:
-- Triez votre DataFrame `pivot_filtered` (ou `pivot` si vous n'avez pas filtré) par la colonne `boost` en ordre croissant avec `.sort_values('boost', ascending=True)`
+- Triez votre DataFrame `pivot_moyennes_filtre` (ou `pivot_moyennes` si vous n'avez pas filtré) par la colonne `boost` en ordre croissant avec `.sort_values('boost', ascending=True)`
 - Affichez le résultat
 
 Dans un nouveau bloc de Markdown:
@@ -791,7 +794,7 @@ plt.show()
 
 Dans un nouveau bloc de code:
 - Créez un graphique en barres horizontales avec `plt.barh()` montrant le pourcentage d'amélioration pour chaque pays
-- Utilisez `pivot_filtered.country` (ou `pivot.country` si vous n'avez pas filtré) pour les labels (axe y) et `pivot_filtered.boost` pour les valeurs (axe x)
+- Utilisez `pivot_moyennes_filtre.country` (ou `pivot_moyennes.country` si vous n'avez pas filtré) pour les labels (axe y) et `pivot_moyennes_filtre.boost` pour les valeurs (axe x)
 - Ajoutez des titres et labels pour les axes avec `plt.xlabel()`, `plt.ylabel()` et `plt.title()`
 
 ## Ajouter des couleurs conditionnelles
@@ -806,8 +809,8 @@ Supposons que nous voulons colorer les barres en vert si la moyenne est >= 15, e
 
 ```python
 # Exemple : couleurs conditionnelles avec une liste simple
-colors = ["g" if x >= 15 else "r" for x in notes_etudiants.moyenne]
-plt.barh(notes_etudiants.etudiant, notes_etudiants.moyenne, color=colors)
+couleurs = ["g" if x >= 15 else "r" for x in notes_etudiants.moyenne]
+plt.barh(notes_etudiants.etudiant, notes_etudiants.moyenne, color=couleurs)
 plt.xlabel('Moyenne')
 plt.ylabel('Étudiant')
 plt.title('Moyennes des étudiants')
@@ -819,15 +822,15 @@ plt.show()
 Pour colorer en vert si les ventes sont > 100, sinon en rouge :
 
 ```python
-colors = ["g" if x > 100 else "r" for x in ventes.total_ventes]
-plt.barh(ventes.produit, ventes.total_ventes, color=colors)
+couleurs = ["g" if x > 100 else "r" for x in ventes.total_ventes]
+plt.barh(ventes.produit, ventes.total_ventes, color=couleurs)
 plt.show()
 ```
 
 💡 Astuce 💡:
 - Vous pouvez créer une liste de couleurs en utilisant une **compréhension de liste** (list comprehension)
 - Syntaxe : `[couleur1 if condition else couleur2 for valeur in liste]`
-- Exemple : `["g" if boost > 0 else "r" for boost in pivot_filtered.boost]` crée une liste avec "g" (vert) si boost > 0, sinon "r" (rouge)
+- Exemple : `["g" if boost > 0 else "r" for boost in pivot_moyennes_filtre.boost]` crée une liste avec "g" (vert) si boost > 0, sinon "r" (rouge)
 
 ### ⚡ Expérimentation ⚡
 
@@ -863,16 +866,16 @@ Pour créer un graphique comparatif avec deux séries de barres côte à côte :
 import numpy as np
 
 # Préparer les positions pour les barres
-y_pos = np.arange(len(notes_etudiants))
-width = 0.35  # Largeur des barres
+positions_y = np.arange(len(notes_etudiants))
+largeur = 0.35  # Largeur des barres
 
 # Créer le graphique
 fig, ax = plt.subplots()
-ax.barh(y_pos - width/2, notes_etudiants.S1, width, label='S1', color='blue')
-ax.barh(y_pos + width/2, notes_etudiants.S2, width, label='S2', color='green')
+ax.barh(positions_y - largeur/2, notes_etudiants.S1, largeur, label='S1', color='blue')
+ax.barh(positions_y + largeur/2, notes_etudiants.S2, largeur, label='S2', color='green')
 
 # Configurer les axes
-ax.set_yticks(y_pos)
+ax.set_yticks(positions_y)
 ax.set_yticklabels(notes_etudiants.etudiant)
 ax.set_xlabel('Moyenne')
 ax.set_title('Comparaison des moyennes S1 vs S2')
@@ -886,14 +889,14 @@ plt.show()
 Pour comparer les ventes de produits entre deux magasins :
 
 ```python
-y_pos = np.arange(len(ventes))
-width = 0.35
+positions_y = np.arange(len(ventes))
+largeur = 0.35
 
 fig, ax = plt.subplots()
-ax.barh(y_pos - width/2, ventes.magasin_paris, width, label='Paris', color='blue')
-ax.barh(y_pos + width/2, ventes.magasin_lyon, width, label='Lyon', color='green')
+ax.barh(positions_y - largeur/2, ventes.magasin_paris, largeur, label='Paris', color='blue')
+ax.barh(positions_y + largeur/2, ventes.magasin_lyon, largeur, label='Lyon', color='green')
 
-ax.set_yticks(y_pos)
+ax.set_yticks(positions_y)
 ax.set_yticklabels(ventes.produit)
 ax.set_xlabel('Ventes')
 ax.set_title('Comparaison des ventes Paris vs Lyon')
@@ -911,7 +914,7 @@ plt.show()
 ### ⚡ Expérimentation ⚡
 
 Dans un nouveau bloc de code:
-- Triez d'abord votre DataFrame `pivot_filtered` par la colonne `boost` avec `.sort_values('boost', ascending=True)`
+- Triez d'abord votre DataFrame `pivot_moyennes_filtre` par la colonne `boost` avec `.sort_values('boost', ascending=True)`
 - Créez un graphique comparatif avec deux séries de barres horizontales côte à côte en utilisant matplotlib
 - Une série pour les moyennes quand le pays n'organise pas (`avg_ext`)
 - Une série pour les moyennes quand le pays organise (`avg_dom`)
