@@ -223,6 +223,72 @@ plt.plot(data.year.astype(str), data.medals_count, color="r")
 Vous donnera un graphique avec une apparence différente.
 
 
+# Trier des données avec pandas
+
+Nous voulons ici savoir quels sont les pays ayant obtenu le plus de médailles dans l'histoire des JO d'hiver. Pour cela il va falloir trier les pays par nombre de médailles.
+
+La méthode `sort_values()` de pandas permet de trier facilement un DataFrame selon une ou plusieurs colonnes.  
+- Si vous souhaitez trier les lignes par ordre croissant ou décroissant d’une colonne, il suffit d’indiquer le nom de la colonne avec le paramètre `by`.
+- Le paramètre `ascending` permet de choisir entre l’ordre croissant (`True`, par défaut) ou décroissant (`False`).
+- Il est aussi possible de trier selon plusieurs colonnes en passant une liste de noms de colonnes.
+
+
+## ⚡ Expérimentation ⚡
+
+- **Bloc de code (Python)** :  
+  - Triez les pays par nombre de médaille obtenue
+  - Affichez le graphique correspondant
+
+
+# Top 5
+
+Nous voulons garder que le Top 5 des pays en nombre de médaille obtenue aux JO d'hiver.
+
+Il est possible de récupérer les `N` premiers elements d'un DataFrame avec la méthode `.head(N)`, si votre DataFrame est déjà trié par ordre décroissant celà revient à faire un "Top N" 
+
+
+➡️ Après avoir utilisé `.head(3)`, vous aurez un DataFrame contenant uniquement les 3 premières lignes du tableau, dans l'ordre d'origine.
+
+### Exemple visuel
+
+Avant `head(3)` :  
+
+| pays     | nb_medailles |
+|----------|--------------|
+| USA      | 280          |
+| Russie   | 220          |
+| Canada   | 230          |
+| Norvège  | 350          |
+| Allemagne| 320          |
+| Finlande | 189          |
+
+Après `df.head(3)` :  
+
+| pays     | nb_medailles |
+|----------|--------------|
+| USA      | 280          |
+| Russie   | 220          |
+| Canada   | 230          |
+
+
+## ⚡ Expérimentation ⚡
+
+Dans un nouveau bloc de code :
+- Utilisez simplement `.head(5)` sur votre DataFrame déjà trié du step précédent pour obtenir le top 5.
+- Affichez ensuite le graphique correspondant (par exemple un barplot avec matplotlib ou pandas plotting) sur ce top 5 uniquement.
+
+---
+
+# Fin du starter
+
+
+---
+
+
+
+
+
+
 # Evaluer les perfomances des différents pays
 
 Nous avons : une table contenant pour chaque médaille le pays, l'année et le statut d'organisateur.
