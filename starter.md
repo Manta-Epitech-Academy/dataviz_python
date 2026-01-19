@@ -8,9 +8,9 @@ Pour cela vous avez à votre disposition un jeu de données comportant l'ensembl
 
 ## Ce que vous allez faire durant cet atelier
 
-En utilisant le language Python et des outils d'analyse de données vous allez tenter de répondre à la question posée en introduction.
+En utilisant le langage Python et des outils d'analyse de données vous allez tenter de répondre à la question posée en introduction.
 
-## Prise en main de l'environement Jupyter Notebook
+## Prise en main de l'environnement Jupyter Notebook
 
 Rendez-vous sur [Jupyter.org](https://jupyter.org/try-jupyter/lab/index.html)
 
@@ -36,27 +36,27 @@ Ajoutez un bloc de Markdown à votre notebook.
 La combinaison `Ctrl+Entrée` vous permet d'afficher le rendu de votre Markdown.
 
 ### 💡 Astuce 💡:
-- Une ligne commencent par ```# ``` en Markdown permet de déclarer un titre
+- Une ligne commençant par `#` en Markdown permet de déclarer un titre
 
 - **Bloc de code (Python)** :
 
-Entrez votre premier bloc de code python dans votre notebook.
+Entrez votre premier bloc de code Python dans votre notebook.
 
 ```python
 print("Hello, world!")
 21 * 2
 ```
 
-La combinaison `Ctrl+Entrée` vous permet d'éxécuter votre bloc de code.
+La combinaison `Ctrl+Entrée` vous permet d'exécuter votre bloc de code.
 
 ### 💡 Astuce 💡:
-- Le resultat de la dernière expression entrée dans un bloc de code (ici `21 * 2`) de votre notebook est automatiquement affichée (si possible) après le bloc de code
+- Le résultat de la dernière expression entrée dans un bloc de code (ici `21 * 2`) de votre notebook est automatiquement affiché (si possible) après le bloc de code
 
 # Lecture du CSV
 
-Lors de l'étape précédente vous avez uploadé le fichier CSV fourni sur votre environemment Jupyter.
+Lors de l'étape précédente vous avez uploadé le fichier CSV fourni sur votre environnement Jupyter.
 
-Un fichier CSV est fichier texte qui stocke des données sous forme de tableau.
+Un fichier CSV est un fichier texte qui stocke des données sous forme de tableau.
 Chaque ligne du CSV correspond à une ligne de données, chaque valeur est séparée par une virgule.
 
 ![csv](img/csv.png)
@@ -71,9 +71,9 @@ Dans un bloc de code:
 
 ---
 ```python
-import pandas as pd
+import pandas
 
-df = pd.read_csv("winter_olympics_medals.csv")
+df = pandas.read_csv("winter_olympics_medals.csv")
 df
 ```
 
@@ -95,7 +95,7 @@ df
 
 ---
 
-Un DataFrame est la structure de données principale de pandas.
+Un DataFrame est la structure de données principale de Pandas.
 Elle ressemble à un tableau Excel avec des lignes et des colonnes, et permet de filtrer, trier et analyser les données facilement.
 
 
@@ -137,7 +137,7 @@ Par exemple pour regrouper les médailles par année d'obtention:
 
 ![groupby1](img/Slide3.jpg)
 
-Il est ensuite possible ensuite d'appliquer un calcul sur chacun des groupes: ici on récupère leur taille.
+Il est ensuite possible d'appliquer un calcul sur chacun des groupes: ici on récupère leur taille.
 
 
 ![groupby2](img/Slide4.jpg)
@@ -149,11 +149,11 @@ Il est ensuite possible ensuite d'appliquer un calcul sur chacun des groupes: ic
 ## ⚡ Expérimentation ⚡:
 
 - **Bloc de code**:
-  Regroupez les médailles obtenues par la France par année. Comptez le nombre de médailles obtenues chaque année. Votre nouvelle colone devrait s'appeller `medal_count`.
+  Regroupez les médailles obtenues par la France par année. Comptez le nombre de médailles obtenues chaque année. Votre nouvelle colonne devrait s'appeler `medal_count`.
 
 - **Bloc de Markdown** :  
   Rédigez une courte réponse à la question suivante:
-  - Quel est nombre de médailles remportées par la France en 1968 et en 1992 ?
+  - Quel est le nombre de médailles remportées par la France en 1968 et en 1992 ?
     
 # Premier graphique
 
@@ -184,10 +184,6 @@ plt.show()
 
 ```
 
-## TODO: broken link
-![med_france_year](img/med_year_fra.png)
-
-
 ## ⚡ Expérimentation ⚡
 
 - **Bloc de code (Python)** :  
@@ -195,7 +191,7 @@ plt.show()
   - Vous pouvez ensuite tenter de personnaliser votre graphe.
 
 - **Explications** :
-  Pouvez-vous expliquer chaque ligne de code  de l'exemple précédent ?
+  Pouvez-vous expliquer chaque ligne de code de l'exemple précédent ?
 
 
 💡 Astuce 💡 : 
@@ -223,28 +219,28 @@ plt.plot(df_france_par_annee.year.astype(str), df_france_par_annee.medals_count,
 Vous donnera un graphique avec une apparence différente.
 
 
-# Trier des données avec pandas
+# Trier des données avec Pandas
 
 Nous voulons ici savoir quels sont les pays ayant obtenu le plus de médailles dans l'histoire des JO d'hiver. Pour cela il va falloir trier les pays par nombre de médailles.
 
-La méthode `sort_values()` de pandas permet de trier facilement un DataFrame selon une ou plusieurs colonnes.  
-- Si vous souhaitez trier les lignes par ordre croissant ou décroissant d’une colonne, il suffit d’indiquer le nom de la colonne avec le paramètre `by`.
-- Le paramètre `ascending` permet de choisir entre l’ordre croissant (`True`, par défaut) ou décroissant (`False`).
+La méthode `sort_values()` de Pandas permet de trier facilement un DataFrame selon une ou plusieurs colonnes.  
+- Si vous souhaitez trier les lignes par ordre croissant ou décroissant d'une colonne, il suffit d'indiquer le nom de la colonne avec le paramètre `by`.
+- Le paramètre `ascending` permet de choisir entre l'ordre croissant (`True`, par défaut) ou décroissant (`False`).
 - Il est aussi possible de trier selon plusieurs colonnes en passant une liste de noms de colonnes.
 
 
 ## ⚡ Expérimentation ⚡
 
-- **Bloc de code (Python)** :  
-  - Triez les pays par nombre de médaille obtenue
+- **Bloc de code (Python)** :  
+  - Triez les pays par nombre de médailles obtenues
   - Affichez le graphique correspondant
 
 
 # Top 5
 
-Nous voulons garder que le Top 5 des pays en nombre de médaille obtenue aux JO d'hiver.
+Nous voulons garder que le Top 5 des pays en nombre de médailles obtenues aux JO d'hiver.
 
-Il est possible de récupérer les `N` premiers elements d'un DataFrame avec la méthode `.head(N)`, si votre DataFrame est déjà trié par ordre décroissant celà revient à faire un "Top N" 
+Il est possible de récupérer les `N` premiers éléments d'un DataFrame avec la méthode `.head(N)`, si votre DataFrame est déjà trié par ordre décroissant cela revient à faire un "Top N" 
 
 💡 Astuce 💡:
 - Dans cet exemple, on suppose que votre DataFrame trié s'appelle `classement_pays` (classement des pays par nombre de médailles).
@@ -254,9 +250,9 @@ Il est possible de récupérer les `N` premiers elements d'un DataFrame avec la 
 
 ### Exemple visuel
 
-Avant `head(3)` :  
+Avant `head(3)` :  
 
-| artiste        | ecoutes |
+| artiste        | écoutes |
 |----------------|---------|
 | Jul            | 350     |
 | Aya Nakamura   | 320     |
@@ -265,9 +261,9 @@ Avant `head(3)` :
 | PNL            | 220     |
 | Angèle         | 189     |
 
-Après `classement_artistes.head(3)` :  
+Après `classement_artistes.head(3)` :  
 
-| artiste      | ecoutes |
+| artiste      | écoutes |
 |--------------|---------|
 | Jul          | 350     |
 | Aya Nakamura | 320     |
@@ -276,8 +272,8 @@ Après `classement_artistes.head(3)` :
 
 ## ⚡ Expérimentation ⚡
 
-Dans un nouveau bloc de code :
-- Utilisez simplement `.head(5)` sur votre DataFrame déjà trié du step précédent pour obtenir le top 5.
+Dans un nouveau bloc de code :
+- Utilisez simplement `.head(5)` sur votre DataFrame déjà trié de l'étape précédente pour obtenir le top 5.
 - Affichez ensuite le graphique correspondant (par exemple un barplot avec matplotlib ou pandas plotting) sur ce top 5 uniquement.
 
 ---
@@ -288,11 +284,7 @@ Dans un nouveau bloc de code :
 ---
 
 
-
-
-
-
-# Evaluer les perfomances des différents pays
+# Évaluer les performances des différents pays
 
 Nous avons : une table contenant pour chaque médaille le pays, l'année et le statut d'organisateur.
 
@@ -660,7 +652,6 @@ Maintenant que nous avons les moyennes de médailles pour chaque pays quand il o
 ### Explication
 
 La formule pour calculer le pourcentage d'amélioration est :
-
 ```
 pourcentage = ((valeur_finale - valeur_initiale) / valeur_initiale) × 100
 ```
@@ -920,10 +911,3 @@ Dans un nouveau bloc de code:
 - Une série pour les moyennes quand le pays organise (`avg_dom`)
 - Utilisez `plt.barh()` avec des positions ajustées (comme dans l'exemple ci-dessus) pour créer les barres côte à côte
 - Ajoutez une légende pour distinguer les deux séries
-
-
-
-
-
-
-
