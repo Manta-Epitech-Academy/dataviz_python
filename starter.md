@@ -911,6 +911,3 @@ Dans un nouveau bloc de code:
 - Une série pour les moyennes quand le pays organise (`avg_dom`)
 - Utilisez `plt.barh()` avec des positions ajustées (comme dans l'exemple ci-dessus) pour créer les barres côte à côte
 - Ajoutez une légende pour distinguer les deux séries</parameter>
-
-```
-pourcentage = ((valeur_finale - valeur_initiale) / valeur_init
