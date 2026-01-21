@@ -1,628 +1,194 @@
-# Évaluer les performances des différents pays
+# Analyse Guidée : Les Pays Hôtes et les Médailles
 
-Nous avons : une table contenant pour chaque médaille le pays, l'année et le statut d'organisateur.
+Bienvenue dans cet atelier d'analyse ! Nous allons maintenant utiliser les compétences du `starter.md` pour répondre à une question plus complexe : **Les pays obtiennent-ils plus de médailles quand ils organisent les Jeux Olympiques d'hiver ?**
 
-Nous voulons : comparer les performances de chaque pays selon qu'il organise les Jeux ou non.
+Pour cela, nous allons devoir manipuler nos données de manière plus avancée. Chaque étape suivra le même format : **Explication**, **Exemple**, et **Expérimentation**.
 
-## Étape 1 : Regrouper par pays, année et statut d'organisateur
+---
+
+## Étape 1 : Regrouper sur Plusieurs Colonnes
 
 ### Explication
 
-Pour commencer, nous allons regrouper les données pour compter le nombre de médailles pour chaque combinaison (pays, année, statut d'organisateur).
+Dans le `starter`, nous avons regroupé les données sur une seule colonne avec `groupby()`. Pour une analyse plus fine, nous pouvons regrouper sur **plusieurs colonnes** en même temps en passant une liste de noms de colonnes. L'ordre des colonnes dans la liste est important.
 
-**Exemple avec des ventes de produits :**
+### Exemple
 
-Supposons que nous avons un DataFrame `ventes` avec les ventes de produits par magasin et par mois (chaque ligne représente une transaction) :
+Imaginons un DataFrame de ventes de produits.
 
-| produit | magasin | mois | quantite |
-|---------|---------|------|----------|
-| Laptop  | Paris   | Jan  | 1        |
-| Laptop  | Paris   | Jan  | 1        |
-| Laptop  | Paris   | Jan  | 1        |
-| Laptop  | Paris   | Fév  | 1        |
-| Laptop  | Paris   | Fév  | 1        |
-| Laptop  | Lyon    | Jan  | 1        |
-| Laptop  | Lyon    | Jan  | 1        |
-| Laptop  | Lyon    | Fév  | 1        |
-| Souris  | Paris   | Jan  | 1        |
-| Souris  | Paris   | Jan  | 1        |
-| Souris  | Paris   | Fév  | 1        |
-| Souris  | Paris   | Fév  | 1        |
-| Souris  | Paris   | Fév  | 1        |
-| Souris  | Lyon    | Jan  | 1        |
-| Souris  | Lyon    | Fév  | 1        |
-| Souris  | Lyon    | Fév  | 1        |
+| produit | magasin | mois |
+|---|---|---|
+| Laptop  | Paris   | Jan  |
+| Laptop  | Paris   | Jan  |
+| Souris  | Lyon    | Fév  |
 
-Pour regrouper et compter le nombre de transactions (ventes) par produit, magasin et mois :
-
+Si nous voulons compter les ventes pour chaque produit, dans chaque magasin et pour chaque mois, nous pouvons utiliser :
 ```python
-# Exemple : regrouper par produit, magasin et mois
-ventes_group = ventes.groupby(['produit', 'magasin', 'mois']).size().reset_index(name="nombre_ventes")
-print(ventes_group)
+# Regrouper sur une liste de colonnes
+ventes.groupby(['produit', 'magasin', 'mois']).size()
 ```
+Le résultat nous donnera le nombre de ventes pour chaque combinaison unique (e.g., 2 Laptops vendus à Paris en Janvier).
 
-**Résultat :**
+### Expérimentation
 
-| produit | magasin | mois | nombre_ventes |
-|---------|---------|------|---------------|
-| Laptop  | Lyon    | Fév  | 1             |
-| Laptop  | Lyon    | Jan  | 2             |
-| Laptop  | Paris   | Fév  | 2             |
-| Laptop  | Paris   | Jan  | 3             |
-| Souris  | Lyon    | Fév  | 2             |
-| Souris  | Lyon    | Jan  | 1             |
-| Souris  | Paris   | Fév  | 3             |
-| Souris  | Paris   | Jan  | 2             |
+- **Bloc de code** :
+  - Reprenez le DataFrame `df` du `starter` contenant les médailles des JO.
+  - Regroupez les données par `country`, `host` et `year` pour compter le nombre de médailles pour chaque participation d'un pays.
+  - Utilisez `.size()` pour faire le décompte.
+  - Transformez le résultat en DataFrame avec `.reset_index(name="medals_count")`.
+  - Stockez le tout dans une nouvelle variable `df_grouped`.
 
-💡 Astuce 💡:
-- Il est possible d'utiliser `.groupby()` sur plusieurs colonnes: ```.groupby(['col1', 'col2', 'col3'])```
-- L'ordre des colonnes est important:
-  - ```.groupby(['produit', 'magasin', 'mois']).size()``` donne une information différente de ```.groupby(['mois', 'produit', 'magasin']).size()```
+- **Bloc de Markdown** :
+  - Affichez votre DataFrame `df_grouped`. Que représente chaque ligne ?
 
-### ⚡ Expérimentation ⚡
+**Astuce** :
+- La fonction `.groupby()` accepte une liste de chaînes de caractères : `['col1', 'col2', ...]`.
 
-Dans un nouveau bloc de code:
-- Regroupez les données par `country`, `host` et `year` et comptez le nombre de médailles pour chaque groupe
-- Utilisez `.reset_index(name="medals")` pour transformer le résultat en DataFrame avec une colonne nommée "medals"
+---
 
-Prenez le temps d'observer le résultat : vous devriez voir pour chaque pays, chaque année, et chaque statut d'organisateur, le nombre de médailles obtenues.
-
-## Étape 2 : Calculer la moyenne par pays et statut d'organisateur
+## Étape 2 : Calculer une Moyenne sur des Groupes
 
 ### Explication
 
-Maintenant que nous avons le nombre de médailles par année pour chaque pays (quand il organise ou non), nous pouvons calculer la moyenne de médailles pour chaque pays selon son statut d'organisateur.
+Une fois les données regroupées, `.size()` est utile pour compter les lignes, mais nous pouvons faire bien plus ! En sélectionnant une colonne après le `groupby()`, nous pouvons appliquer des calculs plus spécifiques comme `.mean()` (moyenne), `.sum()` (somme), ou `.max()` (maximum).
 
-**Exemple avec des notes d'étudiants :**
+### Exemple
 
-Supposons que nous avons un DataFrame `notes_etudiants` avec les notes de plusieurs étudiants :
+Avec un DataFrame de notes d'étudiants :
 
-| etudiant | matiere   | note |
-|----------|-----------|------|
-| Alice    | Math      | 15   |
-| Alice    | Français  | 12   |
-| Alice    | Anglais   | 14   |
-| Bob      | Math      | 18   |
-| Bob      | Français  | 16   |
-| Bob      | Anglais   | 17   |
-| Claire   | Math      | 13   |
-| Claire   | Français  | 11   |
-| Claire   | Anglais   | 15   |
+| etudiant | matiere | note |
+|---|---|---|
+| Alice    | Math    | 15   |
+| Alice    | Français| 12   |
+| Bob      | Math    | 18   |
 
-Pour calculer la moyenne de notes par étudiant :
-
+Pour calculer la moyenne de *chaque étudiant*, on regroupe par `etudiant`, on sélectionne la colonne `note`, puis on applique `.mean()`:
 ```python
-# Exemple : calculer la moyenne de notes par étudiant
-moyennes = notes_etudiants.groupby('etudiant')['note'].mean().reset_index(name="moyenne")
-print(moyennes)
+# Calculer la moyenne des notes par étudiant
+notes.groupby('etudiant')['note'].mean()
 ```
+Le résultat montrera que la moyenne d'Alice est 13.5 et celle de Bob est 18.
 
-**Résultat :**
+### Expérimentation
 
-| etudiant | moyenne |
-|----------|---------|
-| Alice    | 13.67   |
-| Bob      | 17.00   |
-| Claire   | 13.00   |
+- **Bloc de code** :
+  - À partir de votre DataFrame `df_grouped` de l'étape précédente, regroupez cette fois par `country` et `host`.
+  - Calculez la moyenne de la colonne `medals_count` pour chaque groupe.
+  - Stockez le résultat dans un DataFrame nommé `df_avg_medals` (n'oubliez pas d'utiliser `.reset_index()`).
 
-Ce code calcule la moyenne de notes pour chaque étudiant en regroupant toutes les matières.
+- **Bloc de Markdown** :
+  - Affichez `df_avg_medals`. Que représentent les colonnes `host=True` et `host=False` ?
 
-💡 Astuce 💡:
-- Après un `.groupby()`, vous pouvez appliquer différentes fonctions comme `.mean()`, `.sum()`, `.max()`, etc.
-- Par exemple : `df_medailles_par_pays_hote_annee.groupby(['country', 'host'])['medals'].mean()` calcule la moyenne de la colonne 'medals' pour chaque groupe (pays, statut)
+**Astuce** :
+- La structure est `df.groupby(...)['colonne_a_calculer'].mean()`.
 
-### ⚡ Expérimentation ⚡
+---
 
-Dans un nouveau bloc de code:
-- À partir du DataFrame `df_medailles_par_pays_hote_annee` créé à l'étape précédente, regroupez par `country` et `host`
-- Calculez la moyenne de la colonne `medals` pour chaque groupe
-- Utilisez `.reset_index(name="average")` pour transformer le résultat en DataFrame
-
-Observez le résultat : vous devriez voir pour chaque pays deux lignes (une où `host` est `True`, une où `host` est `False`) avec la moyenne de médailles dans chaque cas.
-
-## Étape 3 : Calculer le nombre de participations
+## Étape 3 : Pivoter une Table
 
 ### Explication
 
-💡 **Important** : Pour comparer équitablement les performances, il est essentiel de tenir compte du nombre de données disponibles. 
+Notre `df_avg_medals` est bien, mais pour comparer facilement les performances, nous préférerions avoir une seule ligne par pays et deux colonnes : une pour la moyenne des médailles en tant qu'hôte, et une autre en tant que non-hôte.
 
-**Exemple avec des notes d'étudiants :**
+La fonction `.pivot_table()` est conçue exactement pour ça. Elle nous permet de "pivoter" une colonne pour que ses valeurs deviennent les nouvelles colonnes du DataFrame.
 
-Supposons que nous voulons comparer les moyennes de notes entre deux étudiants :
-- Alice a eu 3 notes : 15, 12, 14 → moyenne = 13.67
-- Bob a eu 1 seule note : 18 → moyenne = 18.00
+### Exemple
 
-La moyenne de Bob semble meilleure, mais elle est basée sur une seule note ! La moyenne d'Alice est plus fiable car elle est calculée sur plusieurs notes.
-
-**Exemple avec des ventes :**
-
-Supposons que nous avons des ventes de produits par magasin :
-
-| produit | magasin | mois | ventes |
-|---------|---------|------|--------|
-| Laptop  | Paris   | Jan  | 10     |
-| Laptop  | Paris   | Fév  | 12     |
-| Laptop  | Paris   | Mar  | 8      |
-| Laptop  | Lyon    | Jan  | 15     |
-| Souris  | Paris   | Jan  | 5      |
-| Souris  | Lyon    | Jan  | 20     |
-
-Pour calculer le nombre de mois de données disponibles par produit et magasin :
-
-```python
-# Calculer le nombre de mois (participations) par produit et magasin
-nb_mois = ventes.groupby(['produit', 'magasin']).size().reset_index(name="nb_mois")
-print(nb_mois)
-```
-
-**Résultat :**
-
-| produit | magasin | nb_mois |
-|---------|---------|---------|
-| Laptop  | Lyon    | 1       |
-| Laptop  | Paris   | 3       |
-| Souris  | Lyon    | 1       |
-| Souris  | Paris   | 1       |
-
-💡 **Pourquoi c'est important** :
-- Une moyenne calculée sur 3 mois est plus fiable qu'une moyenne sur 1 mois
-- Un magasin avec peu de données peut avoir une moyenne très élevée ou très basse simplement par chance
-- Pour une analyse robuste, il est recommandé de filtrer les cas qui ont un nombre minimum de données (par exemple, au moins 3 mois)
-
-### ⚡ Expérimentation ⚡
-
-Dans un nouveau bloc de code:
-- Calculez le nombre de participations pour chaque combinaison (pays, statut d'organisateur) à partir du DataFrame `df_medailles_par_pays_hote_annee`
-- Utilisez `.groupby(['country', 'host']).size()` pour compter le nombre d'années
-- Utilisez `.reset_index(name="nb_participations")` pour créer un DataFrame avec une colonne nommée "nb_participations"
-
-Dans un nouveau bloc de Markdown:
-- Expliquez pourquoi il est important de considérer le nombre de participations lors de la comparaison des performances
-- Proposez un seuil minimum de participations (par exemple, 3) pour considérer qu'une moyenne est fiable
-
-## Étape 4 : Fusionner les données de moyenne et de participations
-
-### Explication
-
-Maintenant, fusionnons les données de moyenne avec les données de nombre de participations pour avoir une vue complète.
-
-**Exemple avec des notes d'étudiants :**
-
-Supposons que nous avons deux DataFrames :
-- `moyennes` : contient les moyennes par étudiant
-- `nb_notes` : contient le nombre de notes par étudiant
-
-| etudiant | moyenne |
-|----------|---------|
-| Alice    | 13.67   |
-| Bob      | 17.00   |
-| Claire   | 13.00   |
-
-| etudiant | nb_notes |
-|----------|----------|
-| Alice    | 3        |
-| Bob      | 1        |
-| Claire   | 3        |
-
-Pour fusionner ces deux DataFrames :
-
-```python
-# Fusionner les moyennes avec le nombre de notes
-moyennes_completes = moyennes.merge(nb_notes, on='etudiant', how='left')
-print(moyennes_completes)
-```
-
-**Résultat :**
-
-| etudiant | moyenne | nb_notes |
-|----------|---------|----------|
-| Alice    | 13.67   | 3        |
-| Bob      | 17.00   | 1        |
-| Claire   | 13.00   | 3        |
-
-💡 Astuce 💡:
-- La méthode `.merge()` permet de fusionner deux DataFrames sur des colonnes communes
-- `on='etudiant'` : colonne sur laquelle faire la jointure
-- `how='left'` : garde toutes les lignes du DataFrame de gauche (moyennes)
-
-### ⚡ Expérimentation ⚡
-
-Dans un nouveau bloc de code:
-- Fusionnez le DataFrame `df_moyennes_par_pays_hote` (moyennes) avec le DataFrame `df_participations_par_pays_hote` en utilisant `.merge()`
-- Utilisez `on=['country', 'host']` pour faire la jointure sur ces deux colonnes
-- Affichez le résultat pour voir les moyennes avec leur nombre de participations correspondant
-
-# Réorganiser les données avec pivot_table
-
-Actuellement, nos données sont organisées avec une ligne par pays et statut d'organisateur. Pour comparer facilement les performances, il serait plus pratique d'avoir une ligne par pays avec deux colonnes : une pour la moyenne quand le pays organise, une pour la moyenne quand il n'organise pas.
-
-La méthode `.pivot_table()` permet de transformer nos données pour avoir les valeurs de `host` (True/False) en colonnes séparées.
-
-## Comprendre pivot_table
-
-### Explication
-
-**Exemple avec des notes d'étudiants par semestre :**
-
-Supposons que nous avons un DataFrame `notes_semestre` avec les notes moyennes des étudiants par semestre :
+Imaginons un DataFrame des notes moyennes par semestre :
 
 | etudiant | semestre | moyenne |
-|----------|----------|---------|
+|---|---|---|
 | Alice    | S1       | 14.5    |
 | Alice    | S2       | 15.0    |
 | Bob      | S1       | 16.0    |
-| Bob      | S2       | 17.5    |
-| Claire   | S1       | 12.0    |
-| Claire   | S2       | 13.5    |
 
-Pour réorganiser ces données avec les semestres en colonnes :
-
+On peut le pivoter pour avoir une ligne par étudiant et une colonne par semestre :
 ```python
-# Exemple : pivot_table avec etudiant et semestre
-pivot_notes = notes_semestre.pivot_table(
-    index='etudiant',
-    columns='semestre',
-    values='moyenne'
-).reset_index()
-print(pivot_notes)
+# Pivoter le DataFrame
+notes.pivot_table(index='etudiant', columns='semestre', values='moyenne')
 ```
+Le résultat sera :
 
-**Résultat :**
+| semestre | S1 | S2 |
+|---|---|---|
+| etudiant | | |
+| Alice | 14.5 | 15.0 |
+| Bob | 16.0 | NaN |
 
-| etudiant | S1   | S2   |
-|----------|------|------|
-| Alice    | 14.5 | 15.0 |
-| Bob      | 16.0 | 17.5 |
-| Claire   | 12.0 | 13.5 |
+### Expérimentation
 
-💡 Astuce 💡:
-- `index='etudiant'` : les étudiants deviennent les lignes
-- `columns='semestre'` : les valeurs de semestre (S1, S2) deviennent les colonnes
-- `values='moyenne'` : les valeurs à placer dans le tableau sont les moyennes
+- **Bloc de code** :
+  - Utilisez `.pivot_table()` sur votre DataFrame `df_avg_medals`.
+  - Utilisez `index='country'` pour que chaque pays devienne une ligne.
+  - Utilisez `columns='host'` pour que les valeurs `True` et `False` deviennent les nouvelles colonnes.
+  - Utilisez `values='medals_count'` (ou le nom que vous avez donné à votre colonne de moyenne) pour remplir la table.
+  - Stockez le résultat dans un DataFrame `df_pivot`.
+  - **Important** : certaines analyses ne sont valides que si nous avons les deux points de comparaison. Utilisez `.dropna()` sur votre `df_pivot` pour ne garder que les pays qui ont organisé au moins une fois ET participé en tant que non-hôte.
 
-### ⚡ Expérimentation ⚡
+- **Bloc de Markdown** :
+  - Affichez votre `df_pivot` après le `.dropna()`. Combien de pays peut-on comparer équitablement ?
 
-Dans un nouveau bloc de code:
-- Utilisez `.pivot_table()` sur votre DataFrame `df_moyennes_avec_participations` pour réorganiser les données avec `country` en lignes et `host` en colonnes
-- Utilisez `.reset_index()` pour transformer le résultat en DataFrame normal
-- Renommez les colonnes pour plus de clarté : `['country', 'avg_ext', 'avg_dom']` (extérieur/domicile)
+---
 
-💡 Astuce 💡:
-- Les colonnes True/False peuvent être dans un ordre différent selon vos données
-- Vérifiez l'ordre avec `pivot_moyennes.columns` avant de renommer
-
-## Filtrer les pays avec les deux types de données et un nombre minimum de participations
+## Étape 4 : Créer une Nouvelle Colonne
 
 ### Explication
 
-**Exemple avec des notes d'étudiants :**
+Maintenant que nos données sont bien structurées, nous pouvons enrichir notre analyse en créant une nouvelle colonne. Par exemple, nous pouvons calculer le pourcentage d'amélioration du nombre de médailles.
 
-Supposons que nous voulons comparer les moyennes entre le premier et le deuxième semestre. Pour faire une comparaison valide, nous devons ne garder que les étudiants qui ont des notes dans les deux semestres.
+La formule du pourcentage d'amélioration est : `((valeur_finale - valeur_initiale) / valeur_initiale) * 100`
 
-De plus, pour avoir des moyennes fiables, il est recommandé de ne garder que les étudiants qui ont un nombre minimum de notes dans chaque semestre (par exemple, au moins 3 notes au S1 ET au moins 3 notes au S2).
+### Exemple
 
-**Exemple avec des ventes :**
-
-Supposons que nous avons des ventes par produit et par magasin :
-
-| produit | magasin | moyenne_ventes | nb_mois |
-|---------|---------|----------------|---------|
-| Laptop  | Paris   | 10.0           | 3       |
-| Laptop  | Lyon    | 15.0           | 1       |
-| Souris  | Paris   | 5.0            | 3       |
-| Souris  | Lyon    | 20.0           | 1       |
-
-Pour comparer les performances entre Paris et Lyon, nous devons :
-1. Ne garder que les produits présents dans les deux magasins
-2. Filtrer ceux qui ont au moins 3 mois de données dans chaque magasin
-
+Si un DataFrame `df` a deux colonnes `ventes_annee_1` et `ventes_annee_2`, on peut créer une colonne `progression` comme ceci :
 ```python
-# Filtrer les produits avec au moins 3 mois dans chaque magasin
-# et présents dans les deux magasins
-ventes_filtrees = ventes[
-    (ventes['nb_mois'] >= 3) &  # Au moins 3 mois de données
-    (ventes['moyenne_ventes'].notna())  # A une moyenne
-].copy()
+# Créer une nouvelle colonne
+df['progression'] = ((df['ventes_annee_2'] - df['ventes_annee_1']) / df['ventes_annee_1']) * 100
 ```
 
-💡 **Pourquoi filtrer par nombre de données ?**
-- Une moyenne calculée sur 1 ou 2 données peut être très variable et peu fiable
-- En filtrant les cas avec peu de données, nous nous assurons que nos comparaisons sont basées sur des données suffisamment robustes
+### Expérimentation
 
-### ⚡ Expérimentation ⚡
+- **Bloc de code** :
+  - Dans votre `df_pivot` nettoyé, créez une nouvelle colonne nommée `boost`.
+  - Dans cette colonne, calculez le pourcentage d'amélioration entre la moyenne de médailles en tant que non-hôte (`False`) et la moyenne en tant qu'hôte (`True`).
+  - Triez votre DataFrame en fonction de cette colonne `boost` avec `.sort_values('boost', ascending=False)`.
 
-Dans un nouveau bloc de code:
-- Créez un pivot pour les participations à partir de `df_moyennes_avec_participations` :
-  ```python
-  pivot_participations = df_moyennes_avec_participations.pivot_table(
-      index='country',
-      columns='host',
-      values='nb_participations'
-  ).reset_index()
-  ```
-- Utilisez `.dropna()` sur votre DataFrame `pivot_moyennes` pour ne garder que les pays qui ont les deux types de données (pas de valeurs manquantes)
-- Optionnel : Filtrez également les pays qui ont moins de 3 participations en extérieur ou moins de 1 participation en domicile :
-  ```python
-  pivot_moyennes_filtre = pivot_moyennes[
-      (pivot_participations[False] >= 3) &  # Au moins 3 participations en extérieur
-      (pivot_participations[True] >= 1) &   # Au moins 1 participation en domicile
-      (pivot_moyennes['avg_ext'].notna()) &          # A une moyenne en extérieur
-      (pivot_moyennes['avg_dom'].notna())            # A une moyenne en domicile
-  ].copy()
-  ```
-- Comparez le nombre de pays avant et après le filtrage
+- **Bloc de Markdown** :
+  - Affichez les 5 premiers pays de votre DataFrame trié. Quel est le pays avec le plus grand "boost" ?
 
-Dans un nouveau bloc de Markdown:
-- Expliquez pourquoi il est important de ne garder que les pays qui ont les deux types de données pour faire une comparaison valide
-- Expliquez pourquoi il est également important de considérer le nombre de participations
+**Astuce** :
+- Les colonnes après le pivot se nomment `True` et `False`. Vous pouvez les utiliser directement dans vos calculs : `df[True]` et `df[False]`.
 
+---
 
-# Calculer le pourcentage d'amélioration
-
-Maintenant que nous avons les moyennes de médailles pour chaque pays quand il organise (`avg_dom`) et quand il n'organise pas (`avg_ext`), nous pouvons calculer le pourcentage d'amélioration (ou de diminution).
-
-## La formule
+## Étape 5 : Visualisation Avancée
 
 ### Explication
 
-La formule pour calculer le pourcentage d'amélioration est :
-```
-pourcentage = ((valeur_finale - valeur_initiale) / valeur_initiale) × 100
-```
+Un graphique est souvent la meilleure façon de présenter une conclusion. Nous allons créer un diagramme en barres horizontales (`plt.barh`) pour visualiser le `boost` de chaque pays. Pour le rendre encore plus lisible, nous allons colorer les barres différemment si le boost est positif ou négatif.
 
-**Exemple avec des notes d'étudiants :**
+### Exemple
 
-Supposons qu'un étudiant a une moyenne de 10/20 au premier semestre et 15/20 au deuxième semestre :
-- Pourcentage d'amélioration = ((15 - 10) / 10) × 100 = 50%
-- L'étudiant a amélioré sa moyenne de 50% !
-
-**Exemple avec des ventes :**
-
-Supposons qu'un magasin a vendu en moyenne 100 produits par mois l'année dernière et 150 produits par mois cette année :
-- Pourcentage d'amélioration = ((150 - 100) / 100) × 100 = 50%
-- Les ventes ont augmenté de 50% !
-
-**Pour notre analyse des Jeux Olympiques :**
-- Si le résultat est **positif** : le pays obtient plus de médailles quand il organise
-- Si le résultat est **négatif** : le pays obtient moins de médailles quand il organise
-
-**Exemple avec un calcul simple :**
-- Si un pays a une moyenne de 10 médailles en extérieur et 15 médailles à domicile
-- Pourcentage = ((15 - 10) / 10) × 100 = 50%
-- Ce pays obtient 50% de médailles en plus quand il organise !
-
-### ⚡ Expérimentation ⚡
-
-Dans un nouveau bloc de code:
-- Créez une nouvelle colonne `boost` dans votre DataFrame `pivot_moyennes` (ou `pivot_moyennes_filtre` si vous avez déjà filtré) avec la formule du pourcentage d'amélioration
-- Utilisez la formule : `((avg_dom - avg_ext) / avg_ext) * 100`
-- Si vous utilisez `pivot_moyennes_filtre`, le calcul du boost se fera automatiquement sur les pays filtrés
-- Affichez le résultat
-
-💡 **Note** : Si vous avez créé `pivot_moyennes_filtre` à l'étape précédente, utilisez-le pour calculer le boost. Sinon, vous pouvez calculer le boost sur `pivot_moyennes` puis filtrer ensuite.
-
-## Trier les résultats
-
-### Explication
-
-Pour mieux visualiser quels éléments sont les meilleurs (ou les moins bons), nous pouvons trier les données.
-
-**Exemple avec des notes d'étudiants :**
-
-Supposons que nous avons un DataFrame avec les moyennes des étudiants :
-
-| etudiant | moyenne |
-|----------|---------|
-| Alice    | 13.67   |
-| Bob      | 17.00   |
-| Claire   | 13.00   |
-
-Pour trier par moyenne décroissante (du meilleur au moins bon) :
-
+Imaginons un DataFrame `df` avec une colonne `pays` et une colonne `score`. On peut créer une liste de couleurs avant de faire le graphique :
 ```python
-# Exemple : trier par moyenne décroissante
-etudiants_tries = notes_etudiants.sort_values('moyenne', ascending=False)
-print(etudiants_tries)
-```
+# Créer une liste de couleurs : 'g' pour vert si score > 0, 'r' pour rouge sinon
+couleurs = ['g' if s > 0 else 'r' for s in df['score']]
 
-**Résultat :**
-
-| etudiant | moyenne |
-|----------|---------|
-| Bob      | 17.00   |
-| Alice    | 13.67   |
-| Claire   | 13.00   |
-
-💡 Astuce 💡:
-- `.sort_values('nom_colonne', ascending=True)` : tri croissant (du plus petit au plus grand)
-- `.sort_values('nom_colonne', ascending=False)` : tri décroissant (du plus grand au plus petit)
-
-![sort](img/Slide6.jpg)
-
-### ⚡ Expérimentation ⚡
-
-Dans un nouveau bloc de code:
-- Triez votre DataFrame `pivot_moyennes_filtre` (ou `pivot_moyennes` si vous n'avez pas filtré) par la colonne `boost` en ordre croissant avec `.sort_values('boost', ascending=True)`
-- Affichez le résultat
-
-Dans un nouveau bloc de Markdown:
-- Interprétez les résultats : 
-  - Quels pays s'améliorent le plus quand ils organisent les Jeux ?
-  - Quels pays s'aggravent quand ils organisent les Jeux ?
-  - Que pouvez-vous conclure ?
-
-
-
-# Visualiser les résultats
-
-Maintenant que nous avons calculé le pourcentage d'amélioration, visualisons ces résultats avec un graphique en utilisant matplotlib.
-
-## Créer un graphique en barres horizontales
-
-### Explication
-
-Un graphique en barres horizontales est idéal pour comparer plusieurs éléments. Nous allons utiliser `plt.barh()`.
-
-**Exemple avec des notes d'étudiants :**
-
-Supposons que nous avons un DataFrame avec les moyennes des étudiants :
-
-| etudiant | moyenne |
-|----------|---------|
-| Alice    | 13.67   |
-| Bob      | 17.00   |
-| Claire   | 13.00   |
-
-Pour créer un graphique en barres horizontales :
-
-```python
-# Exemple : graphique en barres horizontales
-plt.barh(notes_etudiants.etudiant, notes_etudiants.moyenne)
-plt.xlabel('Moyenne')
-plt.ylabel('Étudiant')
-plt.title('Moyennes des étudiants')
+# Créer le graphique en utilisant cette liste
+plt.barh(df['pays'], df['score'], color=couleurs)
+plt.title("Scores par pays")
 plt.show()
 ```
+Cette technique de "list comprehension" est très puissante en Python.
 
-**Exemple avec des ventes :**
+### Expérimentation
 
-```python
-# Exemple : graphique en barres horizontales pour les ventes
-plt.barh(ventes.produit, ventes.total_ventes)
-plt.xlabel('Total des ventes')
-plt.ylabel('Produit')
-plt.title('Ventes par produit')
-plt.show()
-```
+- **Bloc de code** :
+  - Prenez votre DataFrame `df_pivot` final, trié par `boost` (pour un graphique plus lisible, triez par ordre croissant cette fois).
+  - Créez une liste de couleurs conditionnelle basée sur la colonne `boost`.
+  - Créez un graphique en barres horizontales (`plt.barh`) avec les noms des pays et leur `boost`.
+  - Utilisez votre liste de couleurs avec le paramètre `color`.
+  - Ajoutez des titres et des labels pour rendre votre graphique compréhensible.
 
-### ⚡ Expérimentation ⚡
-
-Dans un nouveau bloc de code:
-- Créez un graphique en barres horizontales avec `plt.barh()` montrant le pourcentage d'amélioration pour chaque pays
-- Utilisez `pivot_moyennes_filtre.country` (ou `pivot_moyennes.country` si vous n'avez pas filtré) pour les labels (axe y) et `pivot_moyennes_filtre.boost` pour les valeurs (axe x)
-- Ajoutez des titres et labels pour les axes avec `plt.xlabel()`, `plt.ylabel()` et `plt.title()`
-
-## Ajouter des couleurs conditionnelles
-
-### Explication
-
-Pour rendre le graphique plus lisible, nous pouvons utiliser des couleurs différentes selon une condition.
-
-**Exemple avec des notes d'étudiants :**
-
-Supposons que nous voulons colorer les barres en vert si la moyenne est >= 15, et en rouge sinon :
-
-```python
-# Exemple : couleurs conditionnelles avec une liste simple
-couleurs = ["g" if x >= 15 else "r" for x in notes_etudiants.moyenne]
-plt.barh(notes_etudiants.etudiant, notes_etudiants.moyenne, color=couleurs)
-plt.xlabel('Moyenne')
-plt.ylabel('Étudiant')
-plt.title('Moyennes des étudiants')
-plt.show()
-```
-
-**Exemple avec des ventes :**
-
-Pour colorer en vert si les ventes sont > 100, sinon en rouge :
-
-```python
-couleurs = ["g" if x > 100 else "r" for x in ventes.total_ventes]
-plt.barh(ventes.produit, ventes.total_ventes, color=couleurs)
-plt.show()
-```
-
-💡 Astuce 💡:
-- Vous pouvez créer une liste de couleurs en utilisant une **compréhension de liste** (list comprehension)
-- Syntaxe : `[couleur1 if condition else couleur2 for valeur in liste]`
-- Exemple : `["g" if boost > 0 else "r" for boost in pivot_moyennes_filtre.boost]` crée une liste avec "g" (vert) si boost > 0, sinon "r" (rouge)
-
-### ⚡ Expérimentation ⚡
-
-Dans un nouveau bloc de code:
-- Créez une liste de couleurs en utilisant une compréhension de liste : vert ("g") si boost >= 0, rouge ("r") sinon
-- Utilisez cette liste avec le paramètre `color=` dans `plt.barh()`
-- Ajoutez les labels et le titre comme précédemment
-
-
-# Comparaison des moyennes
-
-Nous pouvons améliorer notre visualisation en créant un graphique comparatif qui montre à la fois les moyennes de médailles quand le pays organise et quand il n'organise pas.
-
-## Créer un graphique comparatif
-
-### Explication
-
-Un graphique comparatif permet de visualiser deux séries de données côte à côte pour faciliter la comparaison.
-
-**Exemple avec des notes d'étudiants par semestre :**
-
-Supposons que nous avons les moyennes des étudiants au S1 et au S2 :
-
-| etudiant | S1   | S2   |
-|----------|------|------|
-| Alice    | 14.5 | 15.0 |
-| Bob      | 16.0 | 17.5 |
-| Claire   | 12.0 | 13.5 |
-
-Pour créer un graphique comparatif avec deux séries de barres côte à côte :
-
-```python
-import numpy as np
-
-# Préparer les positions pour les barres
-positions_y = np.arange(len(notes_etudiants))
-largeur = 0.35  # Largeur des barres
-
-# Créer le graphique
-fig, ax = plt.subplots()
-ax.barh(positions_y - largeur/2, notes_etudiants.S1, largeur, label='S1', color='blue')
-ax.barh(positions_y + largeur/2, notes_etudiants.S2, largeur, label='S2', color='green')
-
-# Configurer les axes
-ax.set_yticks(positions_y)
-ax.set_yticklabels(notes_etudiants.etudiant)
-ax.set_xlabel('Moyenne')
-ax.set_title('Comparaison des moyennes S1 vs S2')
-ax.legend()
-
-plt.show()
-```
-
-**Exemple avec des ventes par magasin :**
-
-Pour comparer les ventes de produits entre deux magasins :
-
-```python
-positions_y = np.arange(len(ventes))
-largeur = 0.35
-
-fig, ax = plt.subplots()
-ax.barh(positions_y - largeur/2, ventes.magasin_paris, largeur, label='Paris', color='blue')
-ax.barh(positions_y + largeur/2, ventes.magasin_lyon, largeur, label='Lyon', color='green')
-
-ax.set_yticks(positions_y)
-ax.set_yticklabels(ventes.produit)
-ax.set_xlabel('Ventes')
-ax.set_title('Comparaison des ventes Paris vs Lyon')
-ax.legend()
-
-plt.show()
-```
-
-💡 **Astuce** : Il est possible de choisir l'ordre de tri (croissant ou décroissant) en renseignant le paramètre `ascending=` à `.sort_values`:
-- `True`: tri dans l'ordre croissant
-- `False`: tri dans l'ordre décroissant
-
-![sort](img/Slide6.jpg)
-
-### ⚡ Expérimentation ⚡
-
-Dans un nouveau bloc de code:
-- Triez d'abord votre DataFrame `pivot_moyennes_filtre` par la colonne `boost` avec `.sort_values('boost', ascending=True)`
-- Créez un graphique comparatif avec deux séries de barres horizontales côte à côte en utilisant matplotlib
-- Une série pour les moyennes quand le pays n'organise pas (`avg_ext`)
-- Une série pour les moyennes quand le pays organise (`avg_dom`)
-- Utilisez `plt.barh()` avec des positions ajustées (comme dans l'exemple ci-dessus) pour créer les barres côte à côte
-- Ajoutez une légende pour distinguer les deux séries
-
+- **Bloc de Markdown** :
+  - Décrivez en une phrase ce que votre graphique final montre. A-t-on répondu à notre question de départ ?
