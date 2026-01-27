@@ -1,285 +1,119 @@
-# Introduction
+# Atelier Prédiction : La Fin des Chansons Longues ?
 
-## Rappel de l'atelier précédent
+Bienvenue dans cet atelier sur la prédiction ! Notre mission est d'utiliser un modèle de **régression linéaire** pour prédire la durée moyenne d’une chanson en 2030, et surtout de questionner les limites de cette prédiction.
 
-Dans l'atelier précédent, vous avez appris à :
-- **Lire des données** avec Pandas (`pandas.read_csv()`)
-- **Filtrer des données** pour extraire des sous-ensembles (`df[df.colonne == valeur]`)
-- **Regrouper des données** avec `groupby()` pour calculer des statistiques
-- **Visualiser des données** avec matplotlib (`plt.bar()`, `plt.plot()`, `plt.scatter()`)
-- **Trier des données** avec `sort_values()`
-- **Sélectionner les N premiers éléments** avec `.head(N)`
+Nous allons nous concentrer sur la période récente (après l'an 2000), où la tendance semble plus claire.
 
-## Contexte
+---
+## Étape 1 : Préparer les données pour l'analyse temporelle
 
-Maintenant, nous allons aller plus loin en apprenant à **prédire l'évolution du nombre d'utilisateurs Internet dans le futur**.
+### Explication
+Le fichier `tracks.csv` contient des millions de chansons. Pour analyser une tendance temporelle, il est plus pertinent de travailler sur des données agrégées. Nous allons donc commencer par **filtrer** les chansons pour ne garder que les plus récentes, puis nous allons **regrouper** (`groupby`) ces chansons par année pour calculer la durée moyenne pour chaque année.
 
-Pour cela vous avez à votre disposition un jeu de données comportant l'évolution du nombre d'utilisateurs Internet par pays depuis 1960 jusqu'à 2023.
-
-## Ce que vous allez faire durant cet atelier
-
-En utilisant le langage Python et des outils d'analyse de données et de machine learning, vous allez apprendre à :
-1. Visualiser des données temporelles avec matplotlib
-2. Créer un modèle de prédiction avec la régression linéaire (scikit-learn)
-3. Faire des prédictions pour le futur
-
-## Prise en main de l'environnement Jupyter Notebook
-
-Si vous n'avez pas encore créé votre notebook, rendez-vous sur [Jupyter.org](https://jupyter.org/try-jupyter/lab/index.html)
-
-- **Créer un nouveau notebook** : *New → Notebook* puis sélectionner le kernel **Python (Pyodide)**
-- **Uploader le fichier CSV** : *Upload* → sélectionner `ict-adoption.csv` → valider
-
-# Importer les bibliothèques
-
-Avant de commencer, nous devons importer les bibliothèques nécessaires.
-
-## ⚡ Expérimentation ⚡
-
-- **Bloc de code (Python)** :  
-  Importez `pandas` et `matplotlib.pyplot` (sous le nom `plt`).
-
-# Lecture du CSV
-
-Lisez le fichier CSV `ict-adoption.csv` avec **pandas** et stockez les données dans un dataframe `df`.
-
-## ⚡ Expérimentation ⚡
-
-- **Bloc de code (Python)** :  
-  Lisez le fichier CSV `ict-adoption.csv` avec `pandas.read_csv()` et stockez le résultat dans une variable `df`. Affichez le DataFrame.
-
-Prenez le temps d'observer les données présentes dans le DataFrame: 
-- Le nombre de lignes
-- Le nom des colonnes et les données qu'elles contiennent
-- La colonne `year` qui indique l'année
-- La colonne `numberOfInternetUsers` qui contient le nombre d'utilisateurs Internet
-
-# Filtrer et nettoyer les données
-
-Pour notre analyse, nous allons filtrer nos données pour ne garder qu'un seul pays, puis supprimer les valeurs manquantes.
-
-## Exemple
-
-Pour filtrer et nettoyer des données :
-
-**Avant** (toutes les données) :
-
-| | country | code | year | temperature |
-|---|---|---|---|---|
-| 0 | France | FRA | 2020 | 5.0 |
-| 1 | Germany | DEU | 2020 | NaN |
-| 2 | France | FRA | 2021 | 7.0 |
-| 3 | France | FRA | 2022 | NaN |
-
+### Exemple
 ```python
-fra = df[df.code == "FRA"]
-fra = fra.dropna()
-fra
+# Pour calculer une moyenne par groupe :
+df_evolution = df_recent.groupby('year')['duration_min'].mean().reset_index()
 ```
 
-**Après** (données filtrées et nettoyées) :
+### ⚡ Expérimentation ⚡
+- **Dans un nouveau bloc de code** :
+  - Chargez le fichier `tracks.csv` avec pandas et stockez-le dans une variable `df`.
+  - Filtrez pour ne garder que les chansons dont l'année est >= 2000 (ex. : `df_recent = df[df['year'] >= 2000]`).
+  - Agrégez : calculez la **durée moyenne par année** et stockez le résultat dans un DataFrame (ex. : `df_evolution`) avec des colonnes **year** et **duration_min**.
+  - Affichez un aperçu du tableau (ex. : `.head()`).
 
-| | country | code | year | temperature |
-|---|---|---|---|---|
-| 0 | France | FRA | 2020 | 5.0 |
-| 2 | France | FRA | 2021 | 7.0 |
+### 💡 Astuce 💡
+- `.reset_index()` après un `groupby(...).mean()` permet d’obtenir un DataFrame avec les noms de colonnes explicites au lieu d’un index multi-niveaux.
 
-## ⚡ Expérimentation ⚡
+---
+## Étape 2 : Visualiser la tendance
 
-- **Bloc de code (Python)** :  
-  - Filtrez les données pour ne garder que la France en utilisant `df[df.code == "FRA"]`
-  - Supprimez les lignes avec des valeurs manquantes avec `.dropna()`
-  - Stockez le résultat dans une variable `fra` et affichez le DataFrame
+### Explication
+Avant d’entraîner un modèle, il est essentiel de **visualiser** les données. Nous allons afficher un graphique pour voir l'évolution de la durée moyenne dans le temps. Un nuage de points avec une droite de régression superposée (ce que fait la fonction `regplot` de la bibliothèque **Seaborn**) est idéal pour voir si la tendance est "linéaire" (si elle ressemble à une droite).
 
-# Premier graphique
-
-Nous pouvons créer un graphique pour visualiser les données en utilisant **matplotlib**.
-
-## ⚡ Expérimentation ⚡
-
-- **Bloc de code (Python)** :  
-  Créez un graphique en nuage de points avec `plt.scatter()` en utilisant `fra.year` en abscisse et `fra.numberOfInternetUsers` en ordonnée.
-
-
-# Créer et entraîner le modèle de régression linéaire
-
-La régression linéaire est une méthode qui permet de trouver une relation linéaire (une ligne droite) entre deux variables. Elle peut être utilisée pour prédire des valeurs futures.
-
-## Exemple
-
-Dans cet exemple, nous allons créer un modèle simple pour prédire le nombre de glaces vendues en fonction de la température, à l'aide du tableau suivant :
-
-| | temperature | nb_glace_vendue |
-|---|---|---|
-| 0 | 18 | 22 |
-| 1 | 20 | 28 |
-| 2 | 22 | 36 |
-| 3 | 24 | 45 |
-| 4 | 26 | 54 |
-| 5 | 28 | 65 |
-
-**Avant** (données brutes) :
-
-| | temperature | nb_glace_vendue |
-|---|---|---|
-| 0 | 18 | 22 |
-| 1 | 20 | 28 |
-| 2 | 22 | 36 |
-| 3 | 24 | 45 |
-| 4 | 26 | 54 |
-| 5 | 28 | 65 |
-
-
+### Exemple
 ```python
-from sklearn.linear_model import LinearRegression
+# Pour tracer année vs durée moyenne avec une droite de régression :
+import seaborn as sns
+import matplotlib.pyplot as plt
 
-# Préparer les données
-X = df_temp[['temperature']]  # Variable explicative (température) - DataFrame requis
-y = df_temp.nb_glace_vendue  # Variable à prédire (nombre de glaces vendues)
-
-# Créer et entraîner le modèle
-model = LinearRegression()
-model.fit(X, y)
-
-# Faire des prédictions
-y_pred = model.predict(X)
-
-# Visualiser
-plt.plot(df_temp.temperature, y_pred)
+sns.regplot(x='year', y='duration_min', data=df_evolution)
+plt.xlabel("Année")
+plt.ylabel("Durée moyenne (minutes)")
 plt.show()
 ```
 
-**Après** (modèle entraîné et ligne de régression affichée) :
+### ⚡ Expérimentation ⚡
+- **Dans un nouveau bloc de code** :
+  - Tracez un graphique (line plot ou scatter + régression) avec **Axe X** : année, **Axe Y** : durée moyenne (en minutes).
+  - Ajoutez des labels et un titre pour que le graphique soit compréhensible.
+- **Bloc de Markdown** :
+  - Voyez-vous une ligne qui descend ? Si oui, la régression linéaire peut bien capturer cette tendance.
 
-Le modèle a trouvé une relation linéaire entre la température et le nombre de glaces vendues. La ligne de régression est affichée sur le graphique.
+### 💡 Astuce 💡
+- `sns.regplot()` affiche à la fois les points et la droite de régression.
 
-Cette ligne permet de **modéliser** (représenter de manière simplifiée) l'évolution d'une donnée par rapport à une autre.
+---
+## Étape 3 : Entraîner le modèle de Machine Learning
 
-## ⚡ Expérimentation ⚡
+### Explication
+Nous allons maintenant quantifier la tendance en créant un modèle mathématique qui suit la formule d'une droite : **y = a*x + b**. C'est un premier pas dans le monde du **Machine Learning**.
+- **X** (appelé "Features") : Ce sont les données que l'on donne au modèle pour qu'il apprenne. Ici, ce sera l'année.
+- **y** (appelé "Target") : C'est ce que l'on cherche à prédire. Ici, la durée moyenne.
 
-- **Bloc de code (Python)** :  
-  - Importez `LinearRegression` depuis `sklearn.linear_model`
-  - Préparez vos données : `X` doit contenir la colonne `year` (sous forme de DataFrame avec `fra[['year']]`), `y` doit contenir `fra.numberOfInternetUsers`
-  - Créez un modèle `LinearRegression()`
-  - Entraînez le modèle avec `.fit(X, y)`
-  - Faites des prédictions avec `.predict(X)` et stockez le résultat dans `y_pred`
-  - Affichez la ligne de régression avec `plt.plot(fra.year, y_pred)` puis `plt.show()`
+En "entraînant" le modèle (avec la fonction `.fit()`), nous demandons à la bibliothèque **scikit-learn** de trouver les meilleures valeurs pour `a` (la pente) et `b`. La pente nous indiquera de combien de minutes les chansons raccourcissent en moyenne chaque année.
 
-💡 Astuce 💡 :
-
-- `X` doit être un DataFrame (avec des doubles crochets `[['year']]`)
-- `y` peut être une série (utilisez `fra.numberOfInternetUsers`)
-
-# Combiner les données et la ligne de régression
-
-Maintenant, affichons à la fois les données historiques et la ligne de régression sur le même graphique.
-
-## Exemple
-
-Pour afficher les points de données et la ligne de régression ensemble :
-
-**Avant** (seulement la ligne de régression) :
-
-Un graphique avec seulement la ligne de régression.
-
+### Exemple
 ```python
-plt.plot(df_temp.temperature, y_pred)
-plt.scatter(df_temp.temperature, df_temp.nb_glace_vendue)
+from sklearn.linear_model import LinearRegression
+
+X = df_evolution[['year']]   # Toujours en 2D
+y = df_evolution['duration_min']
+
+model = LinearRegression()
+model.fit(X, y)
+print("Coefficient (minutes par an) :", model.coef_[0])
 ```
 
-**Après** (points + ligne de régression) :
+### ⚡ Expérimentation ⚡
+- **Dans un nouveau bloc de code** :
+  - Définissez `X` avec la colonne des années (DataFrame 2D : `df_evolution[['year']]`).
+  - Définissez `y` avec la colonne des durées moyennes.
+  - Créez un modèle `LinearRegression()`, entraînez-le avec `.fit(X, y)`.
+  - Affichez le coefficient ; si vous le convertissez en secondes par an (`coef * 60`), interprétez en une phrase : « Chaque année, les chansons perdent environ X secondes. »
 
-Un graphique montrant les points de données ET la ligne de régression qui représente la tendance.
+### 💡 Astuce 💡
+- `X` doit être un DataFrame (double crochet : `df_evolution[['year']]`).
 
-## ⚡ Expérimentation ⚡
+---
+## Étape 4 : Faire nos prédictions
 
-- **Bloc de code (Python)** :  
-  - Affichez la ligne de régression avec `plt.plot(fra.year, y_pred)`
-  - Ajoutez les points de données avec `plt.scatter(fra.year, fra.numberOfInternetUsers)`
+### Explication
+Maintenant que notre modèle est entraîné, nous pouvons l'utiliser comme un "oracle" pour **prédire** la durée moyenne pour des années qui ne sont pas dans nos données. C'est l'étape de prédiction (avec la fonction `.predict()`). C'est aussi le moment de faire preuve d'esprit critique et de se demander si le résultat a du sens.
 
-💡 Astuce 💡 :
-
-- Vous pouvez appeler plusieurs fonctions matplotlib dans le même bloc de code
-- Les graphiques s'ajoutent les uns aux autres sur la même figure
-
-# Faire des prédictions pour plusieurs années
-
-Maintenant que notre modèle est entraîné, nous pouvons l'utiliser pour faire des prédictions pour des années futures.
-
-## Exemple
-
-Pour prédire le nombre de glaces vendues pour différentes températures :
-
-**Avant** (modèle entraîné) :
-
-Un modèle qui peut prédire le nombre de glaces vendues.
-
+### Exemple
 ```python
-prediction_future = model.predict(pandas.DataFrame({'temperature': [30, 32, 34]}))
-prediction_future
+# Prédire la durée moyenne pour les années 2030 et 2050
+model.predict([[2030], [2050]]) # format 2D
 ```
 
-**Après** (prédictions générées) :
+### ⚡ Expérimentation ⚡
+- **Dans un nouveau bloc de code** :
+  - Prédisez la durée moyenne pour les années **2030** et **2050** avec `model.predict(...)` (format 2D, ex. : `[[2030], [2050]]`).
+  - Affichez les résultats de manière lisible (ex. : minutes et secondes).
+- **Bloc de Markdown** :
+  - Le résultat pour 2030 vous semble-t-il réaliste ? Et pour 2050 ? En quoi le modèle « prolonge-t-il juste une ligne » sans comprendre le contexte ?
 
-Un tableau contenant les prédictions pour les températures 30°C, 32°C et 34°C.
+### 💡 Astuce 💡
+- Pour afficher une durée en minutes et secondes : `minutes = int(duree)`, `secondes = int((duree - minutes) * 60)`.
 
-## ⚡ Expérimentation ⚡
+---
+## Bonus : La chanson de 0 seconde, c'est pour quand ?
 
-- **Bloc de code (Python)** :  
-  - Prédisez le nombre d'utilisateurs Internet pour les années 2026, 2027 et 2028
-  - Utilisez `pandas.DataFrame({'year': [2026, 2027, 2028]})` pour créer les données d'entrée
-  - Stockez le résultat dans une variable `prediction_next` et affichez-la
+### Explication
+Si on extrapole la droite jusqu’à une durée nulle, à quelle année arriverait-on ? Mathématiquement, on résout **0 = ax + b**, soit **x = -b / a**. Cela nous permet de calculer une date "théorique" de fin de la musique.
 
-💡 Astuce 💡 :
-
-- Pour faire une prédiction, utilisez `.predict()` avec des données dans le même format que lors de l'entraînement
-- Vous pouvez prédire plusieurs valeurs en une seule fois en passant plusieurs années dans le DataFrame
-
-# Visualiser les prédictions
-
-Ajoutons les prédictions futures sur notre graphique pour voir l'évolution prévue.
-
-## Exemple
-
-Pour afficher les prédictions sur le graphique :
-
-**Avant** (graphique avec données historiques et ligne de régression) :
-
-Un graphique montrant les données historiques et la ligne de régression.
-
-```python
-plt.plot(df_temp.temperature, y_pred)
-plt.scatter(df_temp.temperature, df_temp.nb_glace_vendue)
-plt.scatter([30, 32, 34], prediction_future, s=100, marker='*')
-```
-
-**Après** (graphique avec prédictions) :
-
-Un graphique montrant les données historiques, la ligne de régression, ET des points étoiles indiquant les prédictions futures.
-
-## ⚡ Expérimentation ⚡
-
-- **Bloc de code (Python)** :  
-  - Affichez la ligne de régression avec `plt.plot(fra.year, y_pred)`
-  - Ajoutez les points de données historiques avec `plt.scatter(fra.year, fra.numberOfInternetUsers)`
-  - Ajoutez les prédictions futures avec `plt.scatter([2026, 2027, 2028], prediction_next, marker='*', s=100)`
-  - N'hésitez pas à personnaliser les couleurs comme vous l'avez appris dans l'atelier précédent
-
-💡 Astuce 💡 :
-
-- `plt.scatter()` accepte des paramètres pour personnaliser l'apparence du marqueur
-- Vous pouvez passer plusieurs valeurs en même temps pour les abscisses et les ordonnées
-
-# Conclusion
-
-Félicitations ! Vous avez appris à :
-- Charger et filtrer des données avec Pandas
-- Visualiser des données avec matplotlib
-- Créer un modèle de régression linéaire avec scikit-learn
-- Faire des prédictions pour le futur
-
-## Questions de réflexion
-
-- Que montre la ligne de régression sur votre graphique ?
-- Une prédiction pour 2050 vous semble-t-elle réaliste ? Pourquoi ?
-- Quelles sont les limites de ce modèle de prédiction ?
+### ⚡ Expérimentation ⚡
+- Calculez cette année à partir de `model.intercept_` (le `b`) et `model.coef_[0]` (le `a`).
+- Discutez : ce résultat est-il crédible ? Cela illustre pourquoi il ne faut pas faire confiance à une extrapolation linéaire sans réfléchir au domaine (durée ≥ 0, effets de saturation, etc.).
