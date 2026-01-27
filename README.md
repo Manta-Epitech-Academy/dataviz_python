@@ -13,7 +13,7 @@
 
 ---
 
-### `infographic.md` (Statistiques Pokémon)
+### `infographics.md` (Statistiques Pokémon)
 
 *   **Durée *(estimée)* de l'atelier : moyenne**
     *   Il y a un nombre modéré d'étapes, car il faut rassembler de nombreuses informations différentes (nom, stats, types, URL des images, etc.) une par une.
