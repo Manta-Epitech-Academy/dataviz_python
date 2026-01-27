@@ -113,7 +113,7 @@ def saluer(nom):
 ```
 
 ### ⚡ Expérimentation ⚡:
-- Dans un nouveau bloc de code, copiez-collez les fonctions `get_img_url(id)`, `get_type_url(name)` et `catch_pct(C, B)` depuis le fichier `infographic.md` original.
+- Dans un nouveau bloc de code, copiez-collez les fonctions `get_img_url(id)`, `get_type_url(name)` et `catch_pct(C, B)` (disponibles dans la documentation complète).
 - **Ensuite, dans une nouvelle cellule** :
     - En utilisant la fonction `get_img_url()`, récupérez le lien vers le sprite de votre Pokémon dans une variable `my_poke_img`.
     - En utilisant (deux fois) la fonction `get_type_url()`, récupérez le lien vers les illustrations des deux types de votre Pokémon dans deux variables nommées respectivement `my_poke_type1_url` et `my_poke_type2_url`.
