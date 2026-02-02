@@ -250,6 +250,7 @@ Exemple:
 - Une valeur de 15% signifie que le Pokémon sera plutôt difficile à attraper, il faudra lui lancer en moyenne 6,6 PokéBalls pour le capturer (même si très rarement une seule suffira, ou au contraire il faudra lui en lancer beaucoup plus).
 
 La formule pour convertir l'indice de capture (0-255) en pourcentage de chance d'attraper le Pokémon est la suivante:
+
 $$
 100 \times \left( \left( \frac{\min\left(\frac{C \times B}{3}, 255\right)}{255} \right)^{\frac{3}{16}} \right)^4
 $$
