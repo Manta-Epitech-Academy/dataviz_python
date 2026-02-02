@@ -1,135 +1,334 @@
-# Atelier Infographie : Créez votre propre Fiche Pokémon
+# Infographie
 
-Bienvenue dans cet atelier créatif ! Nous allons maintenant utiliser les compétences que nous avons acquises pour générer une infographie : une fiche de statistiques pour un Pokémon, comme dans le jeu !
+A faire dans un nouveau notebook.
+Reférez-vous au [starter](starter.md) pour savoir comment créer un nouveau notebook Jupyter et comment uploader vos ressources (CSV)
 
----
-## Étape 1 : Importer les bibliothèques
+## Prérequis
 
-### Explication
-Pour commencer, nous avons besoin de nos outils. Nous allons importer la bibliothèque **Pandas** pour gérer nos données, ainsi que la bibliothèque **random** pour nous aider à choisir un Pokémon au hasard.
+Avoir fait le [starter](starter.md).
 
-### ⚡ Expérimentation ⚡:
+## Contexte
+
+Générer des fiches de statistiques Pokémon.
+
+## Importer les bibliothèques
+
+Nous avons besoin de `pandas` et de `random`.
+
+## ⚡ Expérimentation ⚡:
+
 - Dans un nouveau bloc de code:
     - Importer la bibliothèque pandas
     - Importer la bibliothèque random
 
 ### 💡 Astuce 💡:
-- Reférez-vous au [starter](starter.md) pour savoir comment importer une bibliothèque.
-- N'oubliez pas d'exécuter vos cellules de code.
+- Reférez-vous au [starter](starter.md) pour savoir comment importer une bibliothèque
+- N'oubliez pas d'exécuter vos cellules de code
 
----
-## Étape 2 : Lire les données et les stocker
+## Lire le CSV et les stocker dans un DataFrame
 
-### Explication
-Comme dans les ateliers précédents, nous allons lire un fichier CSV, cette fois-ci `complete_pokedex.csv`, et le stocker dans un **DataFrame** Pandas pour pouvoir travailler avec.
+Ici le CSV à lire est `complete_pokedex.csv`
 
-### ⚡ Expérimentation ⚡:
+## ⚡ Expérimentation ⚡:
+
 - Dans un nouveau bloc de code:
-    - Lisez le csv `complete_pokedex.csv` et stockez-le dans un dataframe `pokemon_df`.
+    - Lisez le csv `complete_pokedex.csv` et stockez-le dans un dataframe `pokemon_df`
 
 ### 💡 Astuce 💡:
+- Reférez-vous au [starter](starter.md) pour savoir comment transformer un CSV en dataframe
 - Comme précédemment, prenez le temps d'observer le dataframe: nombre de lignes, nom des colonnes, etc.
 
----
-## Étape 3 : Sélectionner un Pokémon de façon aléatoire
+## Sélectionner un Pokémon de façon aléatoire
 
-### Explication
-Pour pimenter un peu les choses, nous allons laisser le hasard choisir pour nous ! Nous allons utiliser la fonction `random.randint()` pour générer un nombre aléatoire entre 1 et 1024, qui correspond à l' `id` d'un Pokémon dans notre tableau. Ensuite, nous filtrerons le DataFrame pour ne garder que la ligne de ce Pokémon.
+Les Pokémons sont numérotés de 1 à 1024. Ces numéros correspondent à la colonne `id` du DataFrame `pokemon_df`.
+Nous allons ici utiliser la fonction `random.randint()` de Python pour choisir un nombre aléatoire correspondant au numéro du Pokémon dont on va devoir générer la fiche de statistique.
 
 ### Exemple:
-Pour générer un nombre aléatoire allant de 1 à 6 (comme un jet de dé) en Python:
+Pour générer un nombre aléatoire allant de 1 à 6 (jet de dé) en Python:
 ```python
+...
 >>> random.randint(1, 6)
 4
+>>> random.randint(1, 6)
+1
 ```
 
-### ⚡ Expérimentation ⚡:
+## ⚡ Expérimentation ⚡:
+
 - Dans un nouveau bloc de code:
-    - Générez un nombre aléatoire entre 1 et 1024, stockez ce nombre dans une variable `random_id`.
+    - Générez un nombre aléatoire entre 1 et 1024, stockez ce nombre dans une variable `random_id`
     - Récupérez la ligne dont la colonne `id` vaut `random_id` dans le DataFrame `pokemon_df` (filtre), stockez cette ligne dans une variable `my_pokemon`.
 
 ### 💡 Astuce 💡:
-- Attention ne confondez pas la valeur de `id` dans `pokemon_df` (commence à 1) et le numéro de la ligne dans `pokemon_df` (commence à 0).
+- Attention ne confondez pas la valeur de `id` dans `pokemon_df` (commence à 1) et le numéro de la ligne dans `pokemon_df` (commence à 0)
+- Reférez-vous au [starter](starter.md) pour savoir comment filtrer un DataFrame selon la valeur d'une colonne
 - Vous pouvez afficher le contenu de vos variables (ici `my_pokemon`) en terminant votre cellule de code par une ligne avec cette variable.
 
----
-## Étape 4 : Récupérer les informations du Pokémon
 
-### Explication
-Maintenant que nous avons une seule ligne dans notre DataFrame `my_pokemon`, nous devons en extraire les informations (son nom, son type, ses statistiques...). Pour récupérer une valeur unique depuis une colonne d'un DataFrame ne contenant qu'une ligne, nous utilisons la syntaxe `.values[0]`.
+## Récupérer les informations sur notre Pokémon
 
-### Exemple:
-Si nous avons un DataFrame `df` d'une seule ligne :
+Afin de faire notre fiche, nous avons besoin de récupérer plusieurs informations sur notre Pokémon.
+
+- Nom du Pokémon
+- Ses types (2 types par Pokémon)
+- Ses statistiques: représentant ses performances globales au combat
+    - de PV, d'attaque, de défense, d'attaque spéciale, de défense spéciale, de vitesse
+- Son indice de capture: valeur qui plus elle est élevée, plus le pokémon sera facile à capturer (maximum 255)
+
+Comment récupérer la valeur d'une colonne depuis un DataFrame contenant qu'une seule ligne ?
+
+
 | nom | age | classe | moyenne |
 | --- | --- | --- | --- |
 | Bob | 16  | 1ère   |  14.2 |
 
 ```python
->>> nom_eleve = df.nom.values[0]
->>> nom_eleve
-'Bob'
+df.nom.values[0]
+Bob
 ```
+
 ```python
->>> moyenne_eleve = df.moyenne.values[0]
->>> moyenne_eleve
+df.moyenne.values[0]
 14.2
 ```
 
-### ⚡ Expérimentation ⚡:
-- Dans un nouveau bloc de code:
-    - Dans une variable `my_poke_name` récupérez le nom de votre Pokémon.
-    - Dans une variable `my_poke_catch` récupérez l'indice de capture de votre Pokémon.
-    - Dans une variable `my_poke_type1` récupérez le premier type de votre Pokémon.
-    - Dans une variable `my_poke_type2` récupérez le second type de votre Pokémon.
-    - Dans une variable `my_poke_hp` récupérez la valeur de sa statistique de PV.
-    - Dans une variable `my_poke_atk` récupérez la valeur de sa statistique d'attaque.
-    - Dans une variable `my_poke_def` récupérez la valeur de sa statistique de défense.
-    - Dans une variable `my_poke_spe_atk` récupérez la valeur de sa statistique d'attaque spéciale.
-    - Dans une variable `my_poke_spe_def` récupérez la valeur de sa statistique de défense spéciale.
-  - Dans une variable `my_poke_speed` récupérez la valeur de sa statistique de vitesse.
-    - Dans une variable `my_poke_stats_total` stockez la somme totale des statistiques de votre Pokémon.
+Nous pouvons stocker ces valeurs dans des variables afin de les réutiliser par la suite.
 
-### 💡 Astuce 💡:
-- Vous pouvez faire un `print(my_poke_name, my_poke_type1, ..., my_poke_speed)` à la fin de votre bloc de code pour vérifier la valeur de toutes vos variables.
-
----
-## Étape 5 : Utiliser des fonctions pour des tâches complexes
-
-### Explication
-Parfois, une tâche peut être complexe ou répétitive. Pour simplifier notre code, nous pouvons l'encapsuler dans une **fonction**. Une fonction est un bloc de code réutilisable auquel on donne un nom. Nous allons utiliser des fonctions déjà préparées pour générer les URLs des images des Pokémon et calculer les probabilités de capture.
-
-### Exemple
-Déclarer et utiliser une fonction :
 ```python
-# On déclare une fonction qui prend un nom en argument
-def saluer(nom):
-    return f"Bonjour, {nom} !"
-
-# On peut ensuite l'utiliser autant de fois qu'on veut
->>> saluer("Alice")
-'Bonjour, Alice !'
->>> saluer("Bob")
-'Bonjour, Bob !'
+>>> nom_eleve = df.nom.values[0]
 ```
 
-### ⚡ Expérimentation ⚡:
-- Dans un nouveau bloc de code, copiez-collez les fonctions `get_img_url(id)`, `get_type_url(name)` et `catch_pct(C, B)` (disponibles dans la documentation complète).
-- **Ensuite, dans une nouvelle cellule** :
-    - En utilisant la fonction `get_img_url()`, récupérez le lien vers le sprite de votre Pokémon dans une variable `my_poke_img`.
-    - En utilisant (deux fois) la fonction `get_type_url()`, récupérez le lien vers les illustrations des deux types de votre Pokémon dans deux variables nommées respectivement `my_poke_type1_url` et `my_poke_type2_url`.
-    - Utilisez (plusieurs fois) la fonction `catch_pct()` pour calculer et stocker dans les variables `proba_poke`, `proba_super`, `proba_hyper` les pourcentages de chance d'attraper votre Pokémon avec une PokéBall, une SuperBall et une HyperBall.
+```python
+>>> moyenne_eleve = df.moyenne.values[0]
+```
+
+```python
+>>> nom_eleve
+Bob
+```
+
+```python
+>>> moyenne_eleve + 1
+15.2
+```
+
+
+## ⚡ Expérimentation ⚡:
+
+- Dans un nouveau bloc de code:
+    - Dans une variable `my_poke_name` récupérez le nom de votre Pokémon
+    - Dans une variable `my_poke_catch` récupérez l'indice de capture de votre Pokémon
+    - Dans une variable `my_poke_type1` récupérez le premier type de votre Pokémon
+    - Dans une variable `my_poke_type2` récupérez le second type de votre Pokémon 
+    - Dans une variable `my_poke_hp` récupérez la valeur de sa statistique de PV
+    - Dans une variable `my_poke_atk` récupérez la valeur de sa statistique d'attaque
+    - Dans une variable `my_poke_def` récupérez la valeur de sa statistique de défense
+    - Dans une variable `my_poke_spe_atk` récupérez la valeur de sa statistique d'attaque spéciale
+    - Dans une variable `my_poke_spe_def` récupérez la valeur de sa statistique de défense spéciale
+    - Dans une variable `my_poke_speed` récupérez la valeur de sa statistique de vitesse
+    - Dans une variable `my_poke_stats_total` stockez la somme totale des statistiques de votre Pokémon: `my_poke_hp + my_poke_atk + my_poke_def + my_poke_spe_atk + my_poke_spe_def + my_poke_speed`
+
+### 💡 Astuce 💡:
+- Vous pouvez faire un `print(my_poke_name, my_poke_type1, my_poke_type2, ..., my_poke_speed)` à la fin de votre bloc de code pour vérifier la valeur de toutes vos variables
+
+## Récupérer des informations supplémentaires sur notre Pokémon
+
+Il est possible de générer une URL pointant sur une illustration de votre Pokémon et de ses types.
+
+Pour l'illustration d'un Pokemon, l'URL est sous la forme suivante :
+```
+https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/<id_du_pokemon>.png
+
+```
+où "id_du_pokemon" correspond au numéro d'un Pokémon.
+
+Par exemple:
+En allant sur [https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png](https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/25.png) vous verrez le sprite de Pikachu.
+
+Pour l'illustration d'un type, l'URL est sous la forme suivante :
+```
+https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-ix/scarlet-violet/<id_du_type>.png
+```
+
+Par exemple:
+En allant sur [https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-ix/scarlet-violet/10.png](https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-ix/scarlet-violet/10.png) vous verrez une illustration pour le type Feu.
+Sur [https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-ix/scarlet-violet/13.png](https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-ix/scarlet-violet/13.png) vous verrez une illustration pour le type Electrique.
+
+
+Pour cela nous allons déclarer et utiliser des fonctions:
+Une fonction est un bloc de code écrit une seule fois et auquel un nom est donné pour pouvoir la réutiliser facilement. Elle sert principalement à ranger un code complexe sous une forme plus facile à utiliser.
+
+Nous allons déclarer une fonction `get_img_url(id)` (récupère l'URL pour l'illustration d'un Pokemon ayant pour numéro: `id`)
+```python
+def get_img_url(id):
+    return f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{id}.png"
+```
+Vous pouvez directement copier-coller cette fonction dans un bloc de code dans votre notebook Jupyter
+
+Déclarez également la fonction `get_type_url(name)` (récupère l'URL pour l'illustration d'un type ayant pour dénomination `name`)
+```python
+def get_type_url(name):
+    types = {
+        'normal': 1, 
+        'fighting': 2, 
+        'flying': 3, 
+        'poison': 4, 
+        'ground': 5, 
+        'rock': 6, 
+        'bug': 7, 
+        'ghost': 8, 
+        'steel': 9, 
+        'fire': 10, 
+        'water': 11, 
+        'grass': 12, 
+        'electric': 13, 
+        'psychic': 14, 
+        'ice': 15, 
+        'dragon': 16, 
+        'dark': 17, 
+        'fairy': 18
+    }
+    return f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-ix/scarlet-violet/{types[name]}.png"
+```
+Vous pouvez directement copier-coller cette fonction dans un bloc de code dans votre notebook Jupyter
+
+Pour utiliser ces fonctions vous pouvez entrer dans un bloc de code:
+
+```python
+>>> get_img_url(6)
+'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/6.png'
+```
+
+Donne un lien vers l'image d'un Dracaufeu.
+
+ou
+
+```python
+>>> get_img_url(random_id)
+'https://raw.githubusercontent.com/...'
+```
+
+Donne un lien vers l'image de votre Pokémon choisi aléatoirement en début d'atelier.
+
+```python
+>>> get_type_url("water")
+'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-ix/scarlet-violet/11.png'
+```
+
+Donne un lien vers l'illustration du type Eau.
+
+```python
+>>> get_type_url(my_poke_type1)
+'https://raw.githubusercontent.com/...'
+```
+
+Donne un lien vers l'illustration du premier type de votre Pokémon choisi aléatoirement en début d'atelier.
+
+
+## ⚡ Expérimentation ⚡:
+
+- Dans un nouveau bloc de code:
+    - En utilisant la fonction `get_img_url()`, récupérez le lien vers le sprite de votre Pokémon dans une variable `my_poke_img`
+    - En utilisant (deux fois) la fonction `get_type_url()`, récupérez le lien vers les illustrations des deux types de votre Pokémon dans deux variables nommées respectivement `my_poke_type1_url` et `my_poke_type2_url`
+
+### 💡 Astuce 💡:
+- Vous pouvez ici aussi utiliser `print(my_poke_img, my_poke_type1_url, my_poke_type2_url)` afin de vérifier si vos variables contiennent les bonnes valeurs.
+- Certains Pokémon n'ont qu'un seul type, dans ce cas il est normal que `my_poke_type1_url` et `my_poke_type2_url` aient la même valeur.
+
+## Représenter la donnée du taux de capture
+
+
+L'indice de capture fourni dans le fichier CSV est une valeur entre 0 et 255 indiquant s'il est plus ou moins facile à capturer.
+
+Cette valeur n'est pas très parlante pour le commun des mortels.
+
+Nous allons donc la remplacer par un pourcentage: la probabilité d'attraper le Pokémon en lui lançant une PokéBall.
+
+Exemple:
+- Une valeur de 50% signifie qu'on a une chance sur deux d'attraper un Pokémon en lui lançant une PokéBall.
+- Une valeur de 95% signifie qu'on est presque garanti d'attraper un Pokémon en lui lançant une PokéBall.
+- Une valeur de 15% signifie que le Pokémon sera plutôt difficile à attraper, il faudra lui lancer en moyenne 6,6 PokéBalls pour le capturer (même si très rarement une seule suffira, ou au contraire il faudra lui en lancer beaucoup plus).
+
+La formule pour convertir l'indice de capture (0-255) en pourcentage de chance d'attraper le Pokémon est la suivante:
+$$
+100 \times \left( \left( \frac{\min\left(\frac{C \times B}{3}, 255\right)}{255} \right)^{\frac{3}{16}} \right)^4
+$$
+
+où
+
+$$
+C = \text{indice de capture du Pokémon}
+$$
+$$
+B = \text{coefficient de capture de la Ball}
+$$
+
+Le coefficient de capture de la Ball change en fonction du type de Ball utilisée:
+
+$$
+B = PokéBall = 1
+$$
+$$
+B = SuperBall = 1.5
+$$
+$$
+B = HyperBall = 2 
+$$
+
+Utiliser une HyperBall est plus efficace que d'utiliser une SuperBall qui est elle-même plus efficace que d'utiliser une PokeBall.
+
+Cette formule peut sembler effrayante, nous allons donc nous servir d'une fonction afin de pouvoir l'utiliser facilement et cacher sa complexité.
+
+```python
+def catch_pct(C, B):
+        return round(100.0 * (((min((C * B) / 3.0, 255.0) / 255.0) ** (3.0 / 16.0)) ** 4),2)
+```
+Vous pouvez directement copier-coller cette fonction dans un nouveau bloc de code de votre notebook Jupyter.
+
+Exemples:
+
+Prenons un Pokemon avec un indice de capture de 190.
+
+- La probabilité de l'attraper en lui lançant une PokéBall:
+```python
+>>> catch_pct(190, 1)
+35.2
+```
+- Une SuperBall:
+```python
+>>> catch_pct(190, 1.5)
+47.7
+```
+
+Avec un Pokémon avec un indice de capture de 25 (donc plus difficile à attraper).
+
+- Avec une PokéBall:
+```python
+>>> catch_pct(25, 1)
+7.7
+```
+- Une HyperBall:
+```python
+>>> catch_pct(25, 2)
+12.9
+```
+
+## ⚡ Expérimentation ⚡:
+
+- Dans un nouveau bloc de code:
+    - Utilisez (plusieurs fois) la fonction `catch_pct()` pour calculer et stocker dans les variables `proba_poke`, `proba_super`, `proba_hyper` respectivement:
+        - Le pourcentage de chance d'attraper votre Pokémon choisi aléatoirement en début d'atelier avec une PokéBall
+        - une SuperBall
+        - une HyperBall
 
 ### 💡 Astuce 💡:
 - Lors des étapes précédentes vous avez normalement récupéré l'indice de capture de votre Pokémon dans une variable appelée `my_poke_catch`.
 
----
-## Étape 6 : Afficher le rendu final
 
-### Explication
-C'est le moment d'assembler tout notre travail ! Nous allons utiliser un bloc de code HTML/CSS fourni pour mettre en forme toutes les variables que nous avons préparées et afficher une belle fiche de statistiques.
+## Rendu de la fiche de statistique
 
-### ⚡ Expérimentation ⚡:
-- Lorsque vous avez terminé toutes les étapes précédentes, vous pouvez enfin afficher le rendu de votre fiche dans votre notebook Jupyter avec le code suivant (à copier-coller directement dans un nouveau bloc de code à la fin de votre notebook).
+Lorsque vous avez terminé toutes les étapes précédentes, vous pouvez enfin afficher le rendu de votre fiche dans votre notebook Jupyter avec le code suivant (à copier-coller directement dans un nouveau bloc de code à la fin de votre notebook). 
+
 ```python
 from IPython.display import HTML, display
 
@@ -327,6 +526,10 @@ html_code = f"""
 display(HTML(html_code))
 ```
 
+Félicitations, vous voyez normalement la fiche de statistique de votre Pokémon complétée.
+
+Si ce n'est pas le cas : vérifiez que vous avez bien nommé toutes les variables comme demandé.
+
 ## Idées de bonus:
 
 Voici quelques idées pour aller plus loin avec votre fiche de statistiques Pokémon :
@@ -376,7 +579,3 @@ Enrichissez votre fiche avec d'autres informations disponibles dans le DataFrame
 - Sa description
 - Le cri du Pokémon `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/<id_du_pokemon>.ogg`
 - etc.
-
-display(HTML(html_code))
-```
-- Exécutez la cellule. Si toutes vos variables des étapes précédentes sont correctement nommées, vous devriez voir apparaître la fiche de statistique complète et stylisée de votre Pokémon !
