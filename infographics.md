@@ -135,9 +135,247 @@ from IPython.display import HTML, display
 
 html_code = f"""
 <!DOCTYPE html>
-... (le reste du code HTML du fichier original) ...
+<html lang="fr">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {{
+            --bg-color: transparent;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-secondary: #7f8c8d;
+            --accent-border: #dfe6e9;
+            --main-color: #58A8F8;
+            
+            --hp-color: #FF5959;
+            --atk-color: #F5AC78;
+            --def-color: #FAE078;
+            --spatk-color: #9DB7F5;
+            --spdef-color: #A7DB8D;
+            --spd-color: #FA92B2;
+        }}
+
+        .pokemon-card {{
+            font-family: 'Poppins', sans-serif;
+            background: var(--card-bg);
+            width: 320px;
+            padding: 30px 20px;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            position: relative;
+            margin: 20px auto;
+            overflow: hidden;
+        }}
+
+        .image-container {{
+            width: 140px; height: 140px;
+            margin: 0 auto 10px;
+            position: relative;
+            display: flex; justify-content: center; align-items: center;
+        }}
+        
+        .image-bg {{
+            position: absolute; width: 100%; height: 100%;
+            background: radial-gradient(circle, rgba(88, 168, 248, 0.2) 0%, transparent 70%);
+            border-radius: 50%; z-index: 0;
+        }}
+
+        .image-container img {{
+            width: 100%; height: 100%;
+            object-fit: contain; position: relative; z-index: 1;
+            filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
+            image-rendering: pixelated; 
+        }}
+
+        .pokemon-name {{
+            font-size: 1.8rem; font-weight: 700; color: var(--text-main);
+            margin: 5px 0 5px 0; text-transform: capitalize;
+        }}
+
+        .name-underline {{
+            height: 4px; width: 40px; background: var(--main-color);
+            margin: 0 auto 20px; border-radius: 2px; opacity: 0.8;
+        }}
+
+        .types-container {{
+            display: flex; justify-content: center; gap: 12px;
+            margin-bottom: 25px; align-items: center;
+        }}
+
+        .type-img-wrapper img {{
+            height: 28px; width: auto; 
+            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.1));
+            transition: transform 0.2s;
+        }}
+        .type-img-wrapper img:hover {{ transform: scale(1.1); }}
+
+        .stats-box {{
+            position: relative;
+            border: 1px solid var(--accent-border);
+            border-radius: 18px;
+            padding: 25px 15px 15px;
+            margin-bottom: 25px;
+            text-align: left;
+            background: linear-gradient(to bottom, #ffffff, #fafbfc);
+        }}
+
+        .total-label {{
+            position: absolute; top: -12px; right: 15px;
+            background: var(--text-main); color: white;
+            padding: 4px 10px; font-weight: 700; font-size: 0.75rem;
+            border-radius: 10px; text-transform: uppercase;
+        }}
+
+        .stat-row {{ display: flex; align-items: center; margin-bottom: 10px; }}
+        .stat-name {{ width: 70px; font-weight: 600; color: var(--text-secondary); font-size: 0.75rem; }}
+        .stat-bar-bg {{ flex-grow: 1; height: 6px; background-color: #eff2f6; border-radius: 4px; overflow: hidden; margin: 0 10px; }}
+        .stat-bar-fill {{ height: 100%; border-radius: 4px; }}
+        .stat-value {{ width: 25px; text-align: right; font-weight: 700; color: var(--text-main); font-size: 0.8rem; }}
+
+        .catch-container {{ display: flex; justify-content: space-between; padding: 0 5px; }}
+        .catch-circle {{
+            width: 70px; height: 80px;
+            border-radius: 16px; background: white;
+            border: 1px solid var(--accent-border);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: all 0.3s ease;
+        }}
+        .catch-ball-img {{ width: 32px; margin-bottom: 4px; }}
+        .catch-percent {{ font-size: 0.85rem; font-weight: 700; color: var(--text-main); }}
+        .catch-label {{ font-size: 0.6rem; color: var(--text-secondary); }}
+        .catch-circle:hover {{ transform: translateY(-3px); border-color: var(--main-color); }}
+
+    </style>
+</head>
+<body>
+
+    <div class="pokemon-card">
+        
+        <div class="image-container">
+            <div class="image-bg"></div>
+            <img src="{my_poke_img}" alt="{my_poke_name}">
+        </div>
+
+        <div class="pokemon-name">{my_poke_name}</div>
+        <div class="name-underline"></div>
+
+        <div class="types-container">
+            <div class="type-img-wrapper"><img src="{my_poke_type1_url}"></div>
+            {f'<div class="type-img-wrapper"><img src="{my_poke_type2_url}"></div>' if my_poke_type1_url != my_poke_type2_url else ''}
+        </div>
+
+        <div class="stats-box">
+            <div class="total-label">Total : {my_poke_stats_total}</div>
+
+            <div class="stat-row">
+                <span class="stat-name">PV</span>
+                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: {(my_poke_hp / 255) * 100}%; background-color: var(--hp-color);"></div></div>
+                <span class="stat-value">{my_poke_hp}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-name">Attaque</span>
+                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: {(my_poke_atk / 255) * 100}%; background-color: var(--atk-color);"></div></div>
+                <span class="stat-value">{my_poke_atk}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-name">Défense</span>
+                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: {(my_poke_def / 255) * 100}%; background-color: var(--def-color);"></div></div>
+                <span class="stat-value">{my_poke_def}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-name">Atq. Spé.</span>
+                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: {(my_poke_spe_atk / 255) * 100}%; background-color: var(--spatk-color);"></div></div>
+                <span class="stat-value">{my_poke_spe_atk}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-name">Déf. Spé.</span>
+                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: {(my_poke_spe_def / 255) * 100}%; background-color: var(--spdef-color);"></div></div>
+                <span class="stat-value">{my_poke_spe_def}</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-name">Vitesse</span>
+                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: {(min(my_poke_speed/255) * 100)}%; background-color: var(--spd-color);"></div></div>
+                <span class="stat-value">{my_poke_speed}</span>
+            </div>
+        </div>
+
+        <div class="catch-container">
+            <div class="catch-circle">
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png" class="catch-ball-img">
+                <span class="catch-percent">{proba_poke}%</span>
+                <span class="catch-label">Poke Ball</span>
+            </div>
+            
+            <div class="catch-circle">
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/great-ball.png" class="catch-ball-img">
+                <span class="catch-percent">{proba_super}%</span>
+                <span class="catch-label">Super Ball</span>
+            </div>
+            
+            <div class="catch-circle">
+                <img src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/ultra-ball.png" class="catch-ball-img">
+                <span class="catch-percent">{proba_hyper}%</span>
+                <span class="catch-label">Hyper Ball</span>
+            </div>
+        </div>
+    </div>
+</body>
 </html>
 """
+
+display(HTML(html_code))
+```
+
+## Idées de bonus:
+
+Voici quelques idées pour aller plus loin avec votre fiche de statistiques Pokémon :
+
+### Générer plusieurs fiches
+
+Générez des fiches pour plusieurs Pokémons différents. Vous pouvez relancer toutes les cellules de votre notebook avec un numéro de Pokémon que vous avez choisi au lieu d'un numéro aléatoire.
+
+
+### Récupérer les sprite en version chromatique
+
+Vous pouvez rendre votre fiche encore plus intéressante en affichant le sprite de votre Pokémon dans sa version chromatique (shiny), qui propose des couleurs alternatives souvent recherchées par les collectionneurs.
+
+Pour récupérer l'URL du sprite chromatique, il suffit de remplacer `pokemon` par `pokemon/shiny` dans l'URL utilisée précédemment. Par exemple, l'URL pour le Léviator chromatique (id 130) devient :
+```
+https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/130.png
+```
+
+au lieu de 
+```
+https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/130.png
+```
+
+Vous pouvez donc créer une nouvelle fonction Python pour obtenir l'URL de la version chromatique :
+```python
+def get_shiny_img_url(id):
+    return f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/shiny/{id}.png"
+```
+
+Utilisez cette fonction pour afficher l'image shiny dans votre fiche, à côté ou en dessous du sprite classique.
+
+
+### Personnaliser le design
+
+Modifiez les couleurs, les styles CSS, ou la mise en page de votre fiche pour créer un design unique. Par exemple :
+- Changez les couleurs des barres de statistiques (reportez-vous au fichier [starter.md](starter.md) pour voir comment utiliser des couleurs en format Hexadécimal)
+
+### Comparer deux Pokémons
+
+Créez une fiche de comparaison qui affiche côte à côte les statistiques de deux Pokémons différents.
+
+### Ajouter des informations supplémentaires
+
+Enrichissez votre fiche avec d'autres informations disponibles dans le DataFrame, comme :
+- La génération à laquelle il appartient
+- Son habitat
+- Sa description
+- Le cri du Pokémon `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/<id_du_pokemon>.ogg`
+- etc.
 
 display(HTML(html_code))
 ```
