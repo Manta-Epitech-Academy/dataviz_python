@@ -10,6 +10,15 @@ Pour cela, nous allons explorer ensemble un jeu de données sur les médailles d
 ### Explication
 Nous allons commencer par prendre en main l'environnement de travail, le **Jupyter Notebook**. C'est un outil interactif qui nous permet de mélanger du texte, comme celui-ci, et des blocs de code que l'on peut exécuter. Nous allons voir comment créer une cellule de texte (appelée **Markdown**) et une cellule de code.
 
+
+Rendez-vous sur [Jupyter.org](https://jupyter.org/try-jupyter/lab/index.html)
+
+- **Créer un nouveau notebook** : *New → Notebook* puis sélectionner le kernel **Python (Pyodide)**
+- **Uploader le fichier CSV** : *Upload* → sélectionner `winter_olympics_medals.csv` → valider
+
+![intro_jupyter](img/dataviz_intro.gif)
+
+
 ### ⚡ Expérimentation ⚡
 - **Bloc de Markdown** :
 Le Markdown est un langage de balisage simple qui permet de mettre en forme du texte facilement.
