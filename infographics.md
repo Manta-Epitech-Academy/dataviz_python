@@ -495,7 +495,7 @@ html_code = f"""
             </div>
             <div class="stat-row">
                 <span class="stat-name">Vitesse</span>
-                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: {(min(my_poke_speed/255) * 100)}%; background-color: var(--spd-color);"></div></div>
+                <div class="stat-bar-bg"><div class="stat-bar-fill" style="width: {(my_poke_speed/255) * 100}%; background-color: var(--spd-color);"></div></div>
                 <span class="stat-value">{my_poke_speed}</span>
             </div>
         </div>
