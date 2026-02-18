@@ -14,7 +14,7 @@ Nous allons commencer par prendre en main l'environnement de travail, le **Jupyt
 Rendez-vous sur [Jupyter.org](https://jupyter.org/try-jupyter/lab/index.html)
 
 - **Créer un nouveau notebook** : *New → Notebook* puis sélectionner le kernel **Python (Pyodide)**
-- **Uploader le fichier CSV** : *Upload* → sélectionner `winter_olympics_medals.csv` → valider
+- **Uploader le fichier CSV** : *Upload* → sélectionner `winter_olympics_medals.csv` → valider. Ou faire un drag'n drop de votre fichier CSV dans votre environement Jupyter.
 
 ![intro_jupyter](img/dataviz_intro.gif)
 
