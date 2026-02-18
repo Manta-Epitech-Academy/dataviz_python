@@ -138,7 +138,7 @@ plt.show()
 
 ### ⚡ Expérimentation ⚡
 - **Bloc de code (Python)** :  
-  - Ajoutez le code nécessaire pour afficher un graphe (exemple ci-dessus) montrant le nombre de médailles obtenues par la France à chaque JO d'hiver.
+  - Ajoutez le code nécessaire pour afficher un graphe (code donné ci-dessus) montrant le nombre de médailles obtenues par la France à chaque JO d'hiver.
   - Vous pouvez ensuite tenter de personnaliser votre graphe.
 - **Explications** :
   Pouvez-vous expliquer chaque ligne de code de l'exemple précédent ?
