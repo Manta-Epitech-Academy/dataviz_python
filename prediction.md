@@ -35,10 +35,17 @@ Avant d’entraîner un modèle, il est essentiel de **visualiser** les données
 ### Exemple
 ```python
 # Pour tracer année vs durée moyenne avec une droite de régression :
-import seaborn as sns
 import matplotlib.pyplot as plt
+import numpy as np
 
-sns.regplot(x='year', y='duration_min', data=df_evolution)
+# Tracer les points
+plt.scatter(df_evolution['year'], df_evolution['duration_min'])
+
+# Calculer et tracer la droite de régression
+z = np.polyfit(df_evolution['year'], df_evolution['duration_min'], 1)
+p = np.poly1d(z)
+plt.plot(df_evolution['year'], p(df_evolution['year']), "r--", alpha=0.8)
+
 plt.xlabel("Année")
 plt.ylabel("Durée moyenne (minutes)")
 plt.show()
@@ -52,7 +59,7 @@ plt.show()
   - Voyez-vous une ligne qui descend ? Si oui, la régression linéaire peut bien capturer cette tendance.
 
 ### 💡 Astuce 💡
-- `sns.regplot()` affiche à la fois les points et la droite de régression.
+- `plt.scatter()` affiche les points, et `np.polyfit()` avec `plt.plot()` permet d'ajouter la droite de régression.
 
 ---
 ## Étape 3 : Entraîner le modèle de Machine Learning
